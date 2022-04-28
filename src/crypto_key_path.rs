@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-use std::fmt::format;
 use serde_cbor::{from_slice, to_vec, Value};
 use serde_cbor::value::from_value;
 use crate::registry_types::{CRYPTO_KEYPATH, RegistryType};
@@ -71,7 +70,7 @@ impl CryptoKeyPath {
         self.source_fingerprint.clone()
     }
     pub fn get_depth(&self) -> Option<u32> {
-        self.depth
+        self.depth.clone()
     }
     pub fn get_path(&self) -> Option<String> {
         if self.components.len() == 0 {

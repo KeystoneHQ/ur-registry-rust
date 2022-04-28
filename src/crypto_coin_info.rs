@@ -39,21 +39,8 @@ impl CryptoCoinInfo {
 impl To for CryptoCoinInfo {
     fn to_cbor(&self) -> Value {
         let mut map = BTreeMap::<Value, Value>::new();
-        match &self.coin_type {
-            Some(CoinType::Bitcoin) => {
-                map.insert(Value::Integer(COIN_TYPE), Value::Integer(0));
-            }
-            None => {}
-        }
-        match &self.network {
-            Some(Network::MainNet) => {
-                map.insert(Value::Integer(NETWORK), Value::Integer(0));
-            }
-            Some(Network::TestNet) => {
-                map.insert(Value::Integer(NETWORK), Value::Integer(1));
-            }
-            None => {}
-        }
+        self.coin_type.clone().and_then(|x| map.insert(Value::Integer(COIN_TYPE), Value::Integer(x as i128)));
+        self.network.clone().and_then(|x| map.insert(Value::Integer(NETWORK), Value::Integer(x as i128)));
         Value::Map(map)
     }
 

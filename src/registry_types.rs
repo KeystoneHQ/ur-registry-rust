@@ -15,3 +15,9 @@ pub const CRYPTO_KEYPATH: RegistryType = RegistryType("crypto-keypath", 304);
 pub const CRYPTO_COIN_INFO: RegistryType = RegistryType("crypto-coin-info", 305);
 pub const CRYPTO_ECKEY: RegistryType = RegistryType("crypto-eckey", 306);
 
+
+// keystone custom
+pub const SOL_SIGN_REQUEST: RegistryType = RegistryType("sol-sign-request", 1101);
+pub const SOL_SIGNATURE: RegistryType = RegistryType("sol-signature", 1102);
+pub const CRYPTO_MULTI_ACCOUNTS: RegistryType = RegistryType("crypto-multi-accounts", 1103);
+

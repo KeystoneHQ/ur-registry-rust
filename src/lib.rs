@@ -5,6 +5,7 @@ mod registry_types;
 mod crypto_hd_key;
 mod crypto_coin_info;
 mod types;
+mod solana;
 
 #[cfg(test)]
 mod tests {
