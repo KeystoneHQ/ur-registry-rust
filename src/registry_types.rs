@@ -1,10 +1,10 @@
-pub struct RegistryType<'a> (&'a str, u32);
+pub struct RegistryType<'a> (&'a str, u64);
 
 impl<'a> RegistryType<'_> {
     pub fn get_type(&self) -> String {
         self.0.to_string()
     }
-    pub fn get_tag(&self) -> u32 {
+    pub fn get_tag(&self) -> u64 {
         self.1
     }
 }

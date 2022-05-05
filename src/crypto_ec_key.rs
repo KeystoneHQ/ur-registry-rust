@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use serde_cbor::{from_slice, to_vec, Value};
-use serde_cbor::value::from_value;
+use crate::cbor_value::CborValue;
 use crate::traits::{To, From, RegistryItem};
 use crate::registry_types::{CRYPTO_ECKEY, RegistryType};
 
@@ -67,34 +67,14 @@ impl To for CryptoECKey {
 }
 
 impl From<CryptoECKey> for CryptoECKey {
-    fn from_cbor(value: Value) -> Result<CryptoECKey, String> {
-        let map: BTreeMap<Value, Value> = match from_value(value) {
-            Ok(t) => t,
-            Err(e) => return Err(e.to_string()),
-        };
-        let curve = match map.get(&Value::Integer(CURVE)).map(|v| from_value::<i128>(v.clone())) {
-            Some(x) => match x {
-                Ok(x) => Some(x),
-                Err(e) => return Err(e.to_string())
-            },
-            None => None
-        };
-        let is_private_key = match map.get(&Value::Integer(PRIVATE)).map(|v| from_value::<bool>(v.clone())) {
-            Some(x) => match x {
-                Ok(x) => Some(x),
-                Err(e) => return Err(e.to_string())
-            },
-            None => None,
-        };
-        let data = match map.get(&Value::Integer(DATA)).map(|v| match from_value(v.clone()) {
-            Ok(Value::Bytes(x)) => Ok(x),
-            Ok(_) => Err("Unexpected value when parsing crypto_ec_key.data".to_string()),
-            Err(e) => Err(e.to_string())
-        }) {
-            Some(Ok(x)) => x,
-            None => vec![],
-            Some(Err(e)) => return Err(e)
-        };
+    fn from_cbor(cbor: Value) -> Result<CryptoECKey, String> {
+        let value = CborValue::new(cbor);
+        let map = value.get_map()?;
+        let curve = map.get_by_integer(CURVE)
+            .map(|v| v.get_integer()).transpose()?;
+        let is_private_key = map.get_by_integer(PRIVATE)
+            .map(|v| v.get_bool()).transpose()?;
+        let data = map.get_by_integer(DATA).map_or(Ok(vec![]), |v| v.get_bytes())?;
         Ok(CryptoECKey { curve, is_private_key, data })
     }
 

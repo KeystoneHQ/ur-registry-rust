@@ -1,12 +1,10 @@
-use std::borrow::Borrow;
 use std::collections::BTreeMap;
-use std::f32::consts::E;
 use serde_cbor::{from_slice, to_vec, Value};
-use serde_cbor::value::from_value;
+use crate::cbor_value::CborValue;
 use crate::crypto_key_path::CryptoKeyPath;
-use crate::registry_types::{RegistryType, SOL_SIGN_REQUEST, UUID};
+use crate::registry_types::{CRYPTO_KEYPATH, RegistryType, SOL_SIGN_REQUEST, UUID};
 use crate::traits::{RegistryItem, To, From};
-use crate::types::{Bytes, CborMap};
+use crate::types::{Bytes};
 
 const REQUEST_ID: i128 = 1;
 const SIGN_DATA: i128 = 2;
@@ -28,7 +26,7 @@ pub struct SolSignRequest {
     derivation_path: CryptoKeyPath,
     address: Option<Bytes>,
     origin: Option<String>,
-    sign_type: Option<SignType>,
+    sign_type: SignType,
 }
 
 impl SolSignRequest {
@@ -37,7 +35,7 @@ impl SolSignRequest {
                derivation_path: CryptoKeyPath,
                address: Option<Bytes>,
                origin: Option<String>,
-               sign_type: Option<SignType>, ) -> SolSignRequest {
+               sign_type: SignType, ) -> SolSignRequest {
         SolSignRequest { request_id, sign_data, derivation_path, address, origin, sign_type }
     }
     pub fn get_request_id(&self) -> Option<Bytes> {
@@ -55,11 +53,8 @@ impl SolSignRequest {
     pub fn get_origin(&self) -> Option<String> {
         self.origin.clone()
     }
-    pub fn get_sign_type(&self) -> Option<SignType> {
+    pub fn get_sign_type(&self) -> SignType {
         self.sign_type.clone()
-    }
-    pub fn get_canonical_sign_type(&self) -> SignType {
-        self.get_sign_type().unwrap_or(SignType::Transaction)
     }
 }
 
@@ -86,7 +81,7 @@ impl To for SolSignRequest {
         self.get_address().and_then(
             |address| map.insert(Value::Integer(ADDRESS), Value::Bytes(address)));
         self.get_origin().and_then(|origin| map.insert(Value::Integer(ORIGIN), Value::Text(origin)));
-        self.get_sign_type().and_then(|sign_type| map.insert(Value::Integer(SIGN_TYPE), Value::Integer(sign_type as i128)));
+        map.insert(Value::Integer(SIGN_TYPE), Value::Integer(self.get_sign_type() as i128));
         Value::Map(map)
     }
 
@@ -98,56 +93,26 @@ impl To for SolSignRequest {
 
 impl From<SolSignRequest> for SolSignRequest {
     fn from_cbor(cbor: Value) -> Result<SolSignRequest, String> {
-        let map: CborMap = match from_value(cbor) {
-            Ok(x) => x,
-            Err(e) => return Err(e.to_string())
-        };
-        let request_id = match map.get(&Value::Integer(REQUEST_ID)) {
-            Some(Value::Tag(37, value)) => {
-                match *value.clone() {
-                    Value::Bytes(x) => Some(x),
-                    _ => return Err("[ur-registry-rust][sol-sign-request][from_cbor]Unexpected value when parsing request_id".to_string())
-                }
-            }
-            Some(_) => {
-                return Err("[ur-registry-rust][sol-sign-request][from_cbor]Unexpected value when parsing request_id".to_string());
-            }
-            None => None,
-        };
-        let sign_data = match map.get(&Value::Integer(SIGN_DATA)) {
-            Some(Value::Bytes(x)) => x.clone(),
-            Some(_) => return Err("[ur-registry-rust][sol-sign-request][from_cbor]Unexpected value when parsing sign_data".to_string()),
-            None => return Err("[ur-registry-rust][sol-sign-request][from_cbor]sign_data is required for sol-sign-request".to_string())
-        };
-        let derivation_path = match map.get(&Value::Integer(DERIVATION_PATH)) {
-            Some(Value::Tag(_, value)) => {
-                match CryptoKeyPath::from_cbor(*value.clone()) {
-                    Ok(x) => x,
-                    Err(e) => return Err(e),
-                }
-            }
-            Some(_) => return Err("invalid type".to_string()),
-            None => return Err("derivation_path is required".to_string()),
-        };
-        let address = match map.get(&Value::Integer(ADDRESS)) {
-            Some(Value::Bytes(x)) => Some(x.clone()),
-            Some(_) => return Err("invalid type".to_string()),
-            None => None,
-        };
-        let origin = match map.get(&Value::Integer(ORIGIN)) {
-            Some(Value::Text(x)) => Some(x.clone()),
-            Some(_) => return Err("invalid type".to_string()),
-            None => None,
-        };
-        let sign_type = match map.get(&Value::Integer(SIGN_TYPE)) {
-            Some(Value::Integer(x)) => match x {
-                1 => Some(SignType::Transaction),
-                2 => Some(SignType::Message),
-                _ => return Err("invalid sign type".to_string()),
-            },
-            Some(_) => return Err("invalid type".to_string()),
-            None => None,
-        };
+        let value = CborValue::new(cbor);
+        let map = value.get_map()?;
+        let request_id = map.get_by_integer(REQUEST_ID)
+            .map(|v| v.get_tag(UUID.get_tag()).and_then(|v| v.get_bytes()))
+            .transpose()?;
+        let sign_data = map.get_by_integer(SIGN_DATA)
+            .map_or(Err("sign_data is required for sol-sign-request".to_string()), |v| v.get_bytes())?;
+        let derivation_path = map.get_by_integer(DERIVATION_PATH)
+            .map_or(
+                Err("derivation_path is required for sol-sign-request".to_string()),
+                |v| v.get_tag(CRYPTO_KEYPATH.get_tag()).and_then(|v| CryptoKeyPath::from_cbor(v.get_value().clone())))?;
+        let address = map.get_by_integer(ADDRESS).map(|v| v.get_bytes()).transpose()?;
+        let origin = map.get_by_integer(ORIGIN).map(|v| v.get_text()).transpose()?;
+        let sign_type = map.get_by_integer(SIGN_TYPE)
+            .map_or(Err("sign_type is required for sol-sign-request".to_string()), |v| v.get_integer())
+            .and_then(|v| match v {
+                1 => Ok(SignType::Transaction),
+                2 => Ok(SignType::Message),
+                x => Err(format!("invalid value for sign_type in sol-sign-request, expected 1 or 2, received {:?}", x)),
+            })?;
         Ok(SolSignRequest { request_id, sign_data, derivation_path, address, origin, sign_type })
     }
 

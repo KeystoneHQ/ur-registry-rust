@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use serde_cbor::{from_slice, to_vec, Value};
-use serde_cbor::value::from_value;
+use crate::cbor_value::{CborValue};
 use crate::registry_types::{CRYPTO_KEYPATH, RegistryType};
 use crate::traits::{RegistryItem, To, From};
 use crate::types::Fingerprint;
@@ -36,12 +36,14 @@ impl PathComponent {
         self.index.clone()
     }
 
-    pub fn get_canonical_index(&self) -> Option<u32> {self.get_index().map(|x| {
-        match self.is_hardened() {
-            true => x + PathComponent::HARDEN_BIT,
-            false => x,
-        }
-    })}
+    pub fn get_canonical_index(&self) -> Option<u32> {
+        self.get_index().map(|x| {
+            match self.is_hardened() {
+                true => x + PathComponent::HARDEN_BIT,
+                false => x,
+            }
+        })
+    }
 
     pub fn is_wildcard(&self) -> bool {
         self.wildcard.clone()
@@ -74,7 +76,7 @@ impl CryptoKeyPath {
     }
     pub fn get_path(&self) -> Option<String> {
         if self.components.len() == 0 {
-            return None
+            return None;
         }
         Some(self.components.iter().map::<String, fn(&PathComponent) -> String>(|component| {
             match (component.wildcard, component.hardened) {
@@ -132,43 +134,30 @@ impl RegistryItem for CryptoKeyPath {
 
 impl From<CryptoKeyPath> for CryptoKeyPath {
     fn from_cbor(cbor: Value) -> Result<CryptoKeyPath, String> {
-        let map: BTreeMap<Value, Value> = match from_value(cbor) {
-            Ok(x) => x,
-            Err(e) => return Err(e.to_string()),
-        };
-        let components: Vec<PathComponent> = match map.get(&Value::Integer(COMPONENTS)) {
-            Some(Value::Array(x)) => {
-                let result: Result<Vec<PathComponent>, String> = x.chunks(2).map(|chunk| {
-                    match chunk.clone() {
-                        [Value::Array(_), Value::Bool(hardened)] => {
-                            Ok(PathComponent { index: None, wildcard: true, hardened: hardened.clone() })
-                        }
-                        [Value::Integer(x), Value::Bool(hardened)] => {
-                            Ok(PathComponent { index: Some(x.clone() as u32), wildcard: false, hardened: hardened.clone() })
-                        }
-                        _ => {
-                            Err("[ur-registry-rust][crypto-keypath][from_cbor]Unexpected value when parsing components".to_string())
-                        }
+        let value = CborValue::new(cbor);
+        let map = value.get_map()?;
+        let components = map.get_by_integer(COMPONENTS)
+            .map_or(Ok(vec![]), |v| v.get_array())?
+            .iter().map(|v| v.get_value().clone()).collect::<Vec<Value>>()
+            .chunks(2)
+            .map(|chunk| {
+                match chunk.clone() {
+                    [Value::Array(_), Value::Bool(hardened)] => {
+                        Ok(PathComponent { index: None, wildcard: true, hardened: hardened.clone() })
                     }
-                }).collect();
-                match result {
-                    Ok(x) => x,
-                    Err(e) => return Err(e)
+                    [Value::Integer(x), Value::Bool(hardened)] => {
+                        Ok(PathComponent { index: Some(x.clone() as u32), wildcard: false, hardened: hardened.clone() })
+                    }
+                    x => {
+                        Err(format!("Unexpected value when parsing components: {:?}", x))
+                    }
                 }
-            }
-            Some(_) => return Err("[ur-registry-rust][crypto-keypath][from_cbor]Unexpected value when parsing components".to_string()),
-            None => vec![],
-        };
-        let source_fingerprint = match map.get(&Value::Integer(SOURCE_FINGERPRINT)) {
-            Some(Value::Integer(x)) => Some(u32::to_be_bytes(x.clone() as u32)),
-            Some(_) => return Err("[ur-registry-rust][crypto-keypath][from_cbor]Unexpected value when parsing components".to_string()),
-            None => None,
-        };
-        let depth = match map.get(&Value::Integer(DEPTH)) {
-            Some(Value::Integer(x)) => Some(x.clone() as u32),
-            Some(_) => return Err("[ur-registry-rust][crypto-keypath][from_cbor]Unexpected value when parsing components".to_string()),
-            None => None,
-        };
+            }).collect::<Result<Vec<PathComponent>, String>>()?;
+        let source_fingerprint = map.get_by_integer(SOURCE_FINGERPRINT)
+            .map(|v| v.get_integer()).transpose()?
+            .map(|v| u32::to_be_bytes(v as u32));
+        let depth = map.get_by_integer(DEPTH)
+            .map(|v| v.get_integer()).transpose()?.map(|v| v as u32);
         Ok(CryptoKeyPath { components, source_fingerprint, depth })
     }
 

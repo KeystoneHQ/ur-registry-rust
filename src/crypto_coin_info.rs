@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use serde_cbor::{from_slice, to_vec, Value};
-use serde_cbor::value::from_value;
+use crate::cbor_value::{CborValue, CborValueMap};
 use crate::registry_types::{CRYPTO_COIN_INFO, RegistryType};
 use crate::traits::{RegistryItem, To, From};
 
@@ -58,27 +58,22 @@ impl RegistryItem for CryptoCoinInfo {
 
 impl From<CryptoCoinInfo> for CryptoCoinInfo {
     fn from_cbor(cbor: Value) -> Result<CryptoCoinInfo, String> {
-        let map: BTreeMap<Value, Value> = match from_value(cbor) {
-            Ok(x) => x,
-            Err(e) => return Err(e.to_string())
-        };
-        let coin_type = match map.get(&Value::Integer(COIN_TYPE)) {
-            Some(Value::Integer(x)) => Some(match x {
+        let value = CborValue::new(cbor);
+        let map: CborValueMap = value.get_map()?;
+        let coin_type = map.get_by_integer(COIN_TYPE)
+            .map(|v| v.get_integer())
+            .transpose()?
+            .map(|v| match v {
                 0 => CoinType::Bitcoin,
-                _ => CoinType::Bitcoin
-            }),
-            Some(_) => return Err("[ur-registry-rust][crypto-coin-info][from_cbor]Unexpected value when parsing components".to_string()),
-            None => None,
-        };
-        let network = match map.get(&Value::Integer(NETWORK)) {
-            Some(Value::Integer(x)) => Some(match x {
+                _ => CoinType::Bitcoin,
+            });
+        let network = map.get_by_integer(NETWORK).map(|v| v.get_integer())
+            .transpose()?
+            .map(|v| match v {
                 0 => Network::MainNet,
                 1 => Network::TestNet,
-                _ => Network::MainNet
-            }),
-            Some(_) => return Err("[ur-registry-rust][crypto-coin-info][from_cbor]Unexpected value when parsing components".to_string()),
-            None => None,
-        };
+                _ => Network::MainNet,
+            });
         Ok(CryptoCoinInfo { coin_type, network })
     }
 

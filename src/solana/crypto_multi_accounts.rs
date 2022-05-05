@@ -1,9 +1,8 @@
 use std::collections::BTreeMap;
 use serde_cbor::{from_slice, to_vec, Value};
-use serde_cbor::value::from_value;
-use serde_cbor::Value::Map;
+use crate::cbor_value::CborValue;
 use crate::crypto_hd_key::CryptoHDKey;
-use crate::registry_types::{CRYPTO_MULTI_ACCOUNTS, RegistryType};
+use crate::registry_types::{CRYPTO_HDKEY, CRYPTO_MULTI_ACCOUNTS, RegistryType};
 use crate::traits::{RegistryItem, To, From};
 use crate::types::Fingerprint;
 
@@ -63,33 +62,24 @@ impl To for CryptoMultiAccounts {
 
 impl From<CryptoMultiAccounts> for CryptoMultiAccounts {
     fn from_cbor(cbor: Value) -> Result<CryptoMultiAccounts, String> {
-        let map: BTreeMap<Value, Value> = match from_value(cbor) {
-            Ok(x) => x,
-            Err(e) => return Err(e.to_string())
-        };
-        let master_fingerprint = match map.get(&Value::Integer(MASTER_FINGERPRINT)) {
-            Some(Value::Integer(x)) => (x.clone() as u32).clone().to_be_bytes(),
-            Some(_) => return Err("[ur-registry-rust][crypto-multi-accounts][from_cbor]received unexpected value when parsing data to crypto-multi-accounts.master_fingerprint".to_string()),
-            None => return Err("[ur-registry-rust][crypto-multi-accounts][from_cbor]master_fingerprint is required for crypto-multi-accounts".to_string()),
-        };
-        let keys: Result<Vec<CryptoHDKey>, String> = match map.get(&Value::Integer(KEYS)) {
-            Some(Value::Array(x)) => {
-                x.clone().iter().map(|value| match value {
-                    Value::Tag(_, value) => {
-                        CryptoHDKey::from_cbor(*value.clone())
-                    }
-                    _ => Err("[ur-registry-rust][crypto-multi-accounts][from_cbor]received unexpected value when parsing data to crypto-multi-accounts.keys".to_string()),
-                }).collect()
-            }
-            Some(_) => return Err("[ur-registry-rust][crypto-multi-accounts][from_cbor]received unexpected value when parsing data to crypto-multi-accounts.keys".to_string()),
-            None => return Err("[ur-registry-rust][crypto-multi-accounts][from_cbor]keys is required for crypto-multi-accounts".to_string()),
-        };
-        let device = match map.get(&Value::Integer(DEVICE)) {
-            Some(Value::Text(x)) => Some(x.clone()),
-            Some(_) => return Err("[ur-registry-rust][crypto-multi-accounts][from_cbor]received unexpected value when parsing data to crypto-multi-accounts.device".to_string()),
-            None => None,
-        };
-        Ok(CryptoMultiAccounts { master_fingerprint, keys: keys?, device })
+        let value = CborValue::new(cbor);
+        let map = value.get_map()?;
+        let master_fingerprint = map.get_by_integer(MASTER_FINGERPRINT)
+            .map_or(
+                Err("master_fingerprint is required for crypto-multi-accounts".to_string()),
+                |v| v.get_integer(),
+            )
+            .map(|v| (v as u32).to_be_bytes())?;
+        let keys = map.get_by_integer(KEYS)
+            .map_or(Err("keys is required for crypto-multi-accounts".to_string()), |v| v.get_array())?
+            .iter()
+            .map(|v|
+                v.get_tag(CRYPTO_HDKEY.get_tag())
+                    .and_then(|v| CryptoHDKey::from_cbor(v.get_value().clone()))
+            )
+            .collect::<Result<Vec<CryptoHDKey>, String>>()?;
+        let device = map.get_by_integer(DEVICE).map(|v| v.get_text()).transpose()?;
+        Ok(CryptoMultiAccounts { master_fingerprint, keys, device })
     }
 
     fn from_bytes(bytes: Vec<u8>) -> Result<CryptoMultiAccounts, String> {

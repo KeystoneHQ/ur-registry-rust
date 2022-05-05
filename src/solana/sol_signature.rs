@@ -1,6 +1,6 @@
 use serde_cbor::{from_slice, to_vec, Value};
-use serde_cbor::value::from_value;
-use crate::registry_types::{RegistryType, SOL_SIGNATURE};
+use crate::cbor_value::CborValue;
+use crate::registry_types::{RegistryType, SOL_SIGNATURE, UUID};
 use crate::traits::{RegistryItem, To, From};
 use crate::types::{Bytes, CborMap};
 
@@ -49,27 +49,16 @@ impl To for SolSignature {
 
 impl From<SolSignature> for SolSignature {
     fn from_cbor(cbor: Value) -> Result<SolSignature, String> {
-        let map: CborMap = match from_value(cbor) {
-            Ok(x) => x,
-            Err(e) => return Err(e.to_string())
-        };
-        let request_id = match map.get(&Value::Integer(REQUEST_ID)) {
-            Some(Value::Tag(37, value)) => {
-                match *value.clone() {
-                    Value::Bytes(x) => Some(x),
-                    _ => return Err("[ur-registry-rust][sol-signature][from_cbor]Unexpected value when parsing request_id".to_string())
-                }
-            }
-            Some(_) => {
-                return Err("[ur-registry-rust][sol-signature][from_cbor]Unexpected value when parsing request_id".to_string());
-            }
-            None => None,
-        };
-        let signature = match map.get(&Value::Integer(SIGNATURE)) {
-            Some(Value::Bytes(x)) => x.clone(),
-            Some(_) => return Err("[ur-registry-rust][sol-signature][from_cbor]Unexpected value when parsing signature".to_string()),
-            None => return Err("[ur-registry-rust][sol-signature][from_cbor]signature is required for sol-signature".to_string())
-        };
+        let cbor_value = CborValue::new(cbor);
+        let map = cbor_value.get_map()?;
+        let request_id = map.get_by_integer(REQUEST_ID)
+            .map(|v| v.get_tag(UUID.get_tag()).and_then(|v| v.get_bytes()))
+            .transpose()?;
+        let signature = map.get_by_integer(SIGNATURE)
+            .map_or(
+                Err("signature is required for sol-signature".to_string()),
+                |r| r.get_bytes(),
+            )?;
         Ok(SolSignature { request_id, signature })
     }
 
