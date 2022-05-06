@@ -1,4 +1,4 @@
-mod crypto_multi_accounts;
-mod sol_sign_request;
-mod sol_signature;
+pub mod crypto_multi_accounts;
+pub mod sol_sign_request;
+pub mod sol_signature;
 

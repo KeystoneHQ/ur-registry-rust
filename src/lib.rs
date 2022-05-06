@@ -1,11 +1,11 @@
-mod crypto_key_path;
-mod crypto_ec_key;
-mod traits;
-mod registry_types;
-mod crypto_hd_key;
-mod crypto_coin_info;
+pub mod crypto_key_path;
+pub mod crypto_ec_key;
+pub mod traits;
+pub mod registry_types;
+pub mod crypto_hd_key;
+pub mod crypto_coin_info;
 mod types;
-mod solana;
+pub mod solana;
 mod cbor_value;
 
 #[cfg(test)]
