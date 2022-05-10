@@ -188,6 +188,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "ur-registry-ffi"
+version = "0.1.0"
+dependencies = [
+ "ur-registry",
+]
+
+[[package]]
 name = "version_check"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"

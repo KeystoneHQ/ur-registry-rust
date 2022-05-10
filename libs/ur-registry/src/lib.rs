@@ -7,12 +7,3 @@ pub mod crypto_coin_info;
 mod types;
 pub mod solana;
 mod cbor_value;
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
-}
