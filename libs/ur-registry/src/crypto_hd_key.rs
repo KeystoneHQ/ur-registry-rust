@@ -268,12 +268,13 @@ impl From<CryptoHDKey> for CryptoHDKey {
 
 #[cfg(test)]
 mod tests {
+    use std::any::Any;
     use hex;
     use hex::{FromHex};
     use crate::crypto_coin_info::{CoinType, CryptoCoinInfo, Network};
     use crate::crypto_hd_key::CryptoHDKey;
     use crate::crypto_key_path::{CryptoKeyPath, PathComponent};
-    use crate::traits::{From, To};
+    use crate::traits::{From, To, UR};
 
     #[test]
     fn test_encode() {
@@ -311,7 +312,10 @@ mod tests {
         assert_eq!(
             "A5035821026FE2355745BB2DB3630BBC80EF5D58951C963C841F54170BA6E5C12BE7FC12A6045820CED155C72456255881793514EDC5BD9447E7F74ABB88C6D6B6480FD016EE8C8505D90131A1020106D90130A1018A182CF501F501F500F401F4081AE9181CF3",
             hex::encode(hd_key.to_bytes()).to_uppercase()
-        )
+        );
+        assert_eq!(
+            "ur:crypto-hdkey/1-1/lpadadcsiocyihbdaehnhdioonaxhdclaojlvoechgferkdpqdiabdrflawshlhdmdcemtfnlrctghchbdolvwsednvdztbgolaahdcxtottgostdkhfdahdlykkecbbweskrymwflvdylgerkloswtbrpfdbsticmwylklpahtaadehoyaoadamtaaddyoyadlecsdwykadykadykaewkadwkaycywlcscewfcpghbziy",
+            hd_key.to_ur_encoder(400).next_part().unwrap());
     }
 
     #[test]

@@ -2,9 +2,13 @@
 Yet another implementation for BC-UR registries. 
 
 ## Libs
+### [UR-Registry](./libs/ur-registry/README.md)
+### [UR-Registry-FFI](./libs/ur-registry-ffi/README.md)
 
+## Interfaces
+### [flutter](./interfaces/ur_registry_flutter/README.md)
 
-### Build
+## Build
 1. Install Android NDK 22.1.7171670
 > Open your `Android Studio`
 > 
@@ -47,4 +51,4 @@ Debug:
 
 Release: 
 
-> make release
+> source .ndk_home && make release

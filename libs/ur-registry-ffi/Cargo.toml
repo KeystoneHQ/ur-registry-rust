@@ -6,6 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+hex = "0.4.3"
+safer-ffi = { version = "0.0.8", features = ["proc_macros"] }
+ur = "0.2.0"
 ur-registry = {path = "../ur-registry"}
 
 [lib]
