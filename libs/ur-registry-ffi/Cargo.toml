@@ -7,9 +7,8 @@ edition = "2021"
 
 [dependencies]
 hex = "0.4.3"
-safer-ffi = { version = "0.0.8", features = ["proc_macros"] }
-ur = "0.2.0"
-ur-registry = {path = "../ur-registry"}
+ur = { path = "../ur-rs" }
+ur-registry = { path = "../ur-registry" }
 
 [lib]
 name = "ur_registry_ffi"

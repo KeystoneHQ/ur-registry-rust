@@ -1,33 +1,32 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
+import 'package:ur_registry_flutter/response.dart';
 
 import 'package:ur_registry_flutter/ur_registry_flutter.dart';
 
-typedef URDecoderNewFFI = Pointer<Void> Function();
-typedef URDecoderNew = Pointer<Void> Function();
+typedef NativeNew = Pointer<Response> Function();
+typedef NativeReceive = Pointer<Void> Function(
+    Pointer<Void>, Pointer<Utf8>, Pointer<NativeFunction<ErrorCallback>>);
+typedef NativeResult = Pointer<Utf8> Function(
+    Pointer<Void>, Pointer<NativeFunction<ErrorCallback>>);
+typedef NativeIsComplete = Pointer<Bool> Function(Pointer<Void>);
+typedef NativeText = Pointer<Utf8> Function();
+typedef NativeU32 = Pointer<Uint32> Function();
 
 typedef ErrorCallback = Handle Function(Pointer<Utf8>);
 
-typedef URDecoderReceiveFFI = Pointer<Void> Function(
-    Pointer<Void>, Pointer<Utf8>, Pointer<NativeFunction<ErrorCallback>>);
-typedef URDecoderReceive = Pointer<Void> Function(
-    Pointer<Void>, Pointer<Utf8>, Pointer<NativeFunction<ErrorCallback>>);
-
-typedef URDecoderResultFFI = Pointer<Utf8> Function(
-    Pointer<Void>, Pointer<NativeFunction<ErrorCallback>>);
-typedef URDecoderResult = Pointer<Utf8> Function(
-    Pointer<Void>, Pointer<NativeFunction<ErrorCallback>>);
-
-typedef URDecoderIsComplete = Pointer<Bool> Function(Pointer<Void>);
-
 class URDecoder {
+  DynamicLibrary lib = UrRegistryFlutter.load();
+  late NativeNew nativeNew = lib.lookup<NativeFunction<NativeNew>>("ur_decoder_new").asFunction();
+  late NativeReceive nativeReceive = lib.lookup<NativeFunction<NativeReceive>>("ur_decoder_receive").asFunction();
+  late NativeIsComplete nativeIsComplete = lib.lookup<NativeFunction<NativeIsComplete>>("ur_decoder_is_complete").asFunction();
+  late NativeResult nativeResult = lib.lookup<NativeFunction<NativeResult>>("ur_decoder_result").asFunction();
+
   late Pointer<Void> decoder;
 
   URDecoder() {
-    URDecoderNew urDecoderNew = UrRegistryFlutter.lib
-        .lookup<NativeFunction<URDecoderNewFFI>>("ur_decoder_new")
-        .asFunction();
-    decoder = urDecoderNew();
+    final response = nativeNew().ref;
+    decoder = response.data;
   }
 
   static void handleError(Pointer<Utf8> error) {
@@ -35,23 +34,18 @@ class URDecoder {
   }
 
   void receive(String ur) {
-    URDecoderReceive urDecoderReceive = UrRegistryFlutter.lib
-        .lookup<NativeFunction<URDecoderReceive>>("ur_decoder_receive")
-        .asFunction();
-    urDecoderReceive(
+    nativeReceive(
         decoder,
         ur.toNativeUtf8(),
         Pointer.fromFunction<ErrorCallback>(handleError));
   }
 
   bool isComplete() {
-    URDecoderIsComplete urDecoderIsComplete = UrRegistryFlutter.lib.lookup<NativeFunction<URDecoderIsComplete>>("ur_decoder_is_complete").asFunction();
-    return urDecoderIsComplete(decoder).value;
+    return nativeIsComplete(decoder).value;
   }
 
   String result() {
-    URDecoderResult urDecoderResult = UrRegistryFlutter.lib.lookup<NativeFunction<URDecoderResult>>("ur_decoder_result").asFunction();
-    Pointer<Utf8> result = urDecoderResult(decoder, Pointer.fromFunction<ErrorCallback>(URDecoder.handleError));
+    Pointer<Utf8> result = nativeResult(decoder, Pointer.fromFunction<ErrorCallback>(URDecoder.handleError));
     final resultStr = result.toDartString();
     return resultStr;
   }
