@@ -1,9 +1,9 @@
-use std::collections::BTreeMap;
-use serde_cbor::{from_slice, to_vec, Value};
-use crate::cbor_value::{CborValue};
-use crate::registry_types::{CRYPTO_KEYPATH, RegistryType};
-use crate::traits::{RegistryItem, To, From};
+use crate::cbor_value::CborValue;
+use crate::registry_types::{RegistryType, CRYPTO_KEYPATH};
+use crate::traits::{From, RegistryItem, To};
 use crate::types::Fingerprint;
+use serde_cbor::{from_slice, to_vec, Value};
+use std::collections::BTreeMap;
 
 const COMPONENTS: i128 = 1;
 const SOURCE_FINGERPRINT: i128 = 2;
@@ -22,13 +22,22 @@ impl PathComponent {
         match index {
             Some(x) => {
                 if x & PathComponent::HARDEN_BIT != 0 {
-                    return Err(format!("Invalid index {} - most significant bit cannot be set", x));
+                    return Err(format!(
+                        "Invalid index {} - most significant bit cannot be set",
+                        x
+                    ));
                 }
-                Ok(PathComponent { index, wildcard: false, hardened })
+                Ok(PathComponent {
+                    index,
+                    wildcard: false,
+                    hardened,
+                })
             }
-            None => {
-                Ok(PathComponent { index, wildcard: true, hardened })
-            }
+            None => Ok(PathComponent {
+                index,
+                wildcard: true,
+                hardened,
+            }),
         }
     }
 
@@ -37,11 +46,9 @@ impl PathComponent {
     }
 
     pub fn get_canonical_index(&self) -> Option<u32> {
-        self.get_index().map(|x| {
-            match self.is_hardened() {
-                true => x + PathComponent::HARDEN_BIT,
-                false => x,
-            }
+        self.get_index().map(|x| match self.is_hardened() {
+            true => x + PathComponent::HARDEN_BIT,
+            false => x,
         })
     }
 
@@ -62,8 +69,16 @@ pub struct CryptoKeyPath {
 }
 
 impl CryptoKeyPath {
-    pub fn new(components: Vec<PathComponent>, source_fingerprint: Option<Fingerprint>, depth: Option<u32>) -> CryptoKeyPath {
-        CryptoKeyPath { components, source_fingerprint, depth }
+    pub fn new(
+        components: Vec<PathComponent>,
+        source_fingerprint: Option<Fingerprint>,
+        depth: Option<u32>,
+    ) -> CryptoKeyPath {
+        CryptoKeyPath {
+            components,
+            source_fingerprint,
+            depth,
+        }
     }
     pub fn get_components(&self) -> Vec<PathComponent> {
         self.components.clone()
@@ -78,14 +93,20 @@ impl CryptoKeyPath {
         if self.components.len() == 0 {
             return None;
         }
-        Some(self.components.iter().map::<String, fn(&PathComponent) -> String>(|component| {
-            match (component.wildcard, component.hardened) {
-                (true, true) => "*'".to_string(),
-                (true, false) => "*".to_string(),
-                (false, true) => format!("{}'", component.index.unwrap()),
-                (false, false) => format!("{}", component.index.unwrap()),
-            }
-        }).collect::<Vec::<String>>().join("/"))
+        Some(
+            self.components
+                .iter()
+                .map::<String, fn(&PathComponent) -> String>(|component| {
+                    match (component.wildcard, component.hardened) {
+                        (true, true) => "*'".to_string(),
+                        (true, false) => "*".to_string(),
+                        (false, true) => format!("{}'", component.index.unwrap()),
+                        (false, false) => format!("{}", component.index.unwrap()),
+                    }
+                })
+                .collect::<Vec<String>>()
+                .join("/"),
+        )
     }
 }
 
@@ -107,7 +128,8 @@ impl To for CryptoKeyPath {
             Some(x) => {
                 map.insert(
                     Value::Integer(SOURCE_FINGERPRINT),
-                    Value::Integer(u32::from_be_bytes(x) as i128));
+                    Value::Integer(u32::from_be_bytes(x) as i128),
+                );
             }
             None => {}
         }
@@ -136,29 +158,42 @@ impl From<CryptoKeyPath> for CryptoKeyPath {
     fn from_cbor(cbor: Value) -> Result<CryptoKeyPath, String> {
         let value = CborValue::new(cbor);
         let map = value.get_map()?;
-        let components = map.get_by_integer(COMPONENTS)
+        let components = map
+            .get_by_integer(COMPONENTS)
             .map_or(Ok(vec![]), |v| v.get_array())?
-            .iter().map(|v| v.get_value().clone()).collect::<Vec<Value>>()
+            .iter()
+            .map(|v| v.get_value().clone())
+            .collect::<Vec<Value>>()
             .chunks(2)
-            .map(|chunk| {
-                match chunk.clone() {
-                    [Value::Array(_), Value::Bool(hardened)] => {
-                        Ok(PathComponent { index: None, wildcard: true, hardened: hardened.clone() })
-                    }
-                    [Value::Integer(x), Value::Bool(hardened)] => {
-                        Ok(PathComponent { index: Some(x.clone() as u32), wildcard: false, hardened: hardened.clone() })
-                    }
-                    x => {
-                        Err(format!("Unexpected value when parsing components: {:?}", x))
-                    }
-                }
-            }).collect::<Result<Vec<PathComponent>, String>>()?;
-        let source_fingerprint = map.get_by_integer(SOURCE_FINGERPRINT)
-            .map(|v| v.get_integer()).transpose()?
+            .map(|chunk| match chunk.clone() {
+                [Value::Array(_), Value::Bool(hardened)] => Ok(PathComponent {
+                    index: None,
+                    wildcard: true,
+                    hardened: hardened.clone(),
+                }),
+                [Value::Integer(x), Value::Bool(hardened)] => Ok(PathComponent {
+                    index: Some(x.clone() as u32),
+                    wildcard: false,
+                    hardened: hardened.clone(),
+                }),
+                x => Err(format!("Unexpected value when parsing components: {:?}", x)),
+            })
+            .collect::<Result<Vec<PathComponent>, String>>()?;
+        let source_fingerprint = map
+            .get_by_integer(SOURCE_FINGERPRINT)
+            .map(|v| v.get_integer())
+            .transpose()?
             .map(|v| u32::to_be_bytes(v as u32));
-        let depth = map.get_by_integer(DEPTH)
-            .map(|v| v.get_integer()).transpose()?.map(|v| v as u32);
-        Ok(CryptoKeyPath { components, source_fingerprint, depth })
+        let depth = map
+            .get_by_integer(DEPTH)
+            .map(|v| v.get_integer())
+            .transpose()?
+            .map(|v| v as u32);
+        Ok(CryptoKeyPath {
+            components,
+            source_fingerprint,
+            depth,
+        })
     }
 
     fn from_bytes(bytes: Vec<u8>) -> Result<CryptoKeyPath, String> {

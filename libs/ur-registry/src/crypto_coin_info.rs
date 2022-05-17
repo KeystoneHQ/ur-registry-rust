@@ -1,8 +1,8 @@
-use std::collections::BTreeMap;
-use serde_cbor::{from_slice, to_vec, Value};
 use crate::cbor_value::{CborValue, CborValueMap};
-use crate::registry_types::{CRYPTO_COIN_INFO, RegistryType};
-use crate::traits::{RegistryItem, To, From};
+use crate::registry_types::{RegistryType, CRYPTO_COIN_INFO};
+use crate::traits::{From, RegistryItem, To};
+use serde_cbor::{from_slice, to_vec, Value};
+use std::collections::BTreeMap;
 
 const COIN_TYPE: i128 = 1;
 const NETWORK: i128 = 2;
@@ -39,8 +39,12 @@ impl CryptoCoinInfo {
 impl To for CryptoCoinInfo {
     fn to_cbor(&self) -> Value {
         let mut map = BTreeMap::<Value, Value>::new();
-        self.coin_type.clone().and_then(|x| map.insert(Value::Integer(COIN_TYPE), Value::Integer(x as i128)));
-        self.network.clone().and_then(|x| map.insert(Value::Integer(NETWORK), Value::Integer(x as i128)));
+        self.coin_type
+            .clone()
+            .and_then(|x| map.insert(Value::Integer(COIN_TYPE), Value::Integer(x as i128)));
+        self.network
+            .clone()
+            .and_then(|x| map.insert(Value::Integer(NETWORK), Value::Integer(x as i128)));
         Value::Map(map)
     }
 
@@ -60,14 +64,17 @@ impl From<CryptoCoinInfo> for CryptoCoinInfo {
     fn from_cbor(cbor: Value) -> Result<CryptoCoinInfo, String> {
         let value = CborValue::new(cbor);
         let map: CborValueMap = value.get_map()?;
-        let coin_type = map.get_by_integer(COIN_TYPE)
+        let coin_type = map
+            .get_by_integer(COIN_TYPE)
             .map(|v| v.get_integer())
             .transpose()?
             .map(|v| match v {
                 0 => CoinType::Bitcoin,
                 _ => CoinType::Bitcoin,
             });
-        let network = map.get_by_integer(NETWORK).map(|v| v.get_integer())
+        let network = map
+            .get_by_integer(NETWORK)
+            .map(|v| v.get_integer())
             .transpose()?
             .map(|v| match v {
                 0 => Network::MainNet,

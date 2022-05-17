@@ -1,8 +1,8 @@
-use std::collections::BTreeMap;
-use serde_cbor::{from_slice, to_vec, Value};
 use crate::cbor_value::CborValue;
-use crate::traits::{To, From, RegistryItem};
-use crate::registry_types::{CRYPTO_ECKEY, RegistryType};
+use crate::registry_types::{RegistryType, CRYPTO_ECKEY};
+use crate::traits::{From, RegistryItem, To};
+use serde_cbor::{from_slice, to_vec, Value};
+use std::collections::BTreeMap;
 
 const CURVE: i128 = 1;
 const PRIVATE: i128 = 2;
@@ -70,12 +70,22 @@ impl From<CryptoECKey> for CryptoECKey {
     fn from_cbor(cbor: Value) -> Result<CryptoECKey, String> {
         let value = CborValue::new(cbor);
         let map = value.get_map()?;
-        let curve = map.get_by_integer(CURVE)
-            .map(|v| v.get_integer()).transpose()?;
-        let is_private_key = map.get_by_integer(PRIVATE)
-            .map(|v| v.get_bool()).transpose()?;
-        let data = map.get_by_integer(DATA).map_or(Ok(vec![]), |v| v.get_bytes())?;
-        Ok(CryptoECKey { curve, is_private_key, data })
+        let curve = map
+            .get_by_integer(CURVE)
+            .map(|v| v.get_integer())
+            .transpose()?;
+        let is_private_key = map
+            .get_by_integer(PRIVATE)
+            .map(|v| v.get_bool())
+            .transpose()?;
+        let data = map
+            .get_by_integer(DATA)
+            .map_or(Ok(vec![]), |v| v.get_bytes())?;
+        Ok(CryptoECKey {
+            curve,
+            is_private_key,
+            data,
+        })
     }
 
     fn from_bytes(bytes: Vec<u8>) -> Result<CryptoECKey, String> {
@@ -89,18 +99,22 @@ impl From<CryptoECKey> for CryptoECKey {
 
 #[cfg(test)]
 mod tests {
-    use hex::FromHex;
     use crate::crypto_ec_key::CryptoECKey;
     use crate::traits::{From, To, UR};
+    use hex::FromHex;
 
     #[test]
     fn test_encode() {
         let crypto_ec_key = CryptoECKey {
             is_private_key: Some(true),
-            data: Vec::from_hex("8c05c4b4f3e88840a4f4b5f155cfd69473ea169f3d0431b7a6787a23777f08aa").unwrap(),
+            data: Vec::from_hex("8c05c4b4f3e88840a4f4b5f155cfd69473ea169f3d0431b7a6787a23777f08aa")
+                .unwrap(),
             ..Default::default()
         };
-        assert_eq!("A202F50358208C05C4B4F3E88840A4F4B5F155CFD69473EA169F3D0431B7A6787A23777F08AA", hex::encode(crypto_ec_key.to_bytes()).to_uppercase());
+        assert_eq!(
+            "A202F50358208C05C4B4F3E88840A4F4B5F155CFD69473EA169F3D0431B7A6787A23777F08AA",
+            hex::encode(crypto_ec_key.to_bytes()).to_uppercase()
+        );
 
         let mut encoder = crypto_ec_key.to_ur_encoder(1000);
         let ur = encoder.next_part().unwrap();
@@ -109,10 +123,17 @@ mod tests {
 
     #[test]
     fn test_decode() {
-        let bytes = Vec::from_hex("A202F50358208C05C4B4F3E88840A4F4B5F155CFD69473EA169F3D0431B7A6787A23777F08AA").unwrap();
+        let bytes = Vec::from_hex(
+            "A202F50358208C05C4B4F3E88840A4F4B5F155CFD69473EA169F3D0431B7A6787A23777F08AA",
+        )
+        .unwrap();
         let crypto_ec_key = CryptoECKey::from_bytes(bytes).unwrap();
         assert_eq!(crypto_ec_key.get_curve(), 0);
         assert_eq!(crypto_ec_key.get_is_private_key(), true);
-        assert_eq!(crypto_ec_key.get_data(), Vec::from_hex("8c05c4b4f3e88840a4f4b5f155cfd69473ea169f3d0431b7a6787a23777f08aa").unwrap());
+        assert_eq!(
+            crypto_ec_key.get_data(),
+            Vec::from_hex("8c05c4b4f3e88840a4f4b5f155cfd69473ea169f3d0431b7a6787a23777f08aa")
+                .unwrap()
+        );
     }
 }

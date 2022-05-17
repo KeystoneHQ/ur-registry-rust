@@ -1,5 +1,5 @@
-use std::ffi::{c_void, CString};
 use crate::types::{PtrString, PtrU32};
+use std::ffi::{c_void, CString};
 
 #[no_mangle]
 pub extern "C" fn utils_free(any_ptr: *mut c_void) {

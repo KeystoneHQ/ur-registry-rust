@@ -1,8 +1,8 @@
-use serde_cbor::{from_slice, to_vec, Value};
 use crate::cbor_value::CborValue;
 use crate::registry_types::{RegistryType, SOL_SIGNATURE, UUID};
-use crate::traits::{RegistryItem, To, From};
+use crate::traits::{From, RegistryItem, To};
 use crate::types::{Bytes, CborMap};
+use serde_cbor::{from_slice, to_vec, Value};
 
 const REQUEST_ID: i128 = 1;
 const SIGNATURE: i128 = 2;
@@ -31,13 +31,16 @@ impl RegistryItem for SolSignature {
 impl To for SolSignature {
     fn to_cbor(&self) -> Value {
         let mut map: CborMap = CborMap::new();
-        self.get_request_id().and_then(
-            |request_id| map.insert(
+        self.get_request_id().and_then(|request_id| {
+            map.insert(
                 Value::Integer(REQUEST_ID),
                 Value::Tag(37, Box::new(Value::Bytes(request_id))),
             )
+        });
+        map.insert(
+            Value::Integer(SIGNATURE),
+            Value::Bytes(self.get_signature()),
         );
-        map.insert(Value::Integer(SIGNATURE), Value::Bytes(self.get_signature()));
         Value::Map(map)
     }
 
@@ -51,15 +54,18 @@ impl From<SolSignature> for SolSignature {
     fn from_cbor(cbor: Value) -> Result<SolSignature, String> {
         let cbor_value = CborValue::new(cbor);
         let map = cbor_value.get_map()?;
-        let request_id = map.get_by_integer(REQUEST_ID)
+        let request_id = map
+            .get_by_integer(REQUEST_ID)
             .map(|v| v.get_tag(UUID.get_tag()).and_then(|v| v.get_bytes()))
             .transpose()?;
-        let signature = map.get_by_integer(SIGNATURE)
-            .map_or(
-                Err("signature is required for sol-signature".to_string()),
-                |r| r.get_bytes(),
-            )?;
-        Ok(SolSignature { request_id, signature })
+        let signature = map.get_by_integer(SIGNATURE).map_or(
+            Err("signature is required for sol-signature".to_string()),
+            |r| r.get_bytes(),
+        )?;
+        Ok(SolSignature {
+            request_id,
+            signature,
+        })
     }
 
     fn from_bytes(bytes: Vec<u8>) -> Result<SolSignature, String> {
