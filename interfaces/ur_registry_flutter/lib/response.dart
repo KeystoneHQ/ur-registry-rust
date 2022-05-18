@@ -5,32 +5,32 @@ const success = 0;
 const error = 1;
 
 class Data extends Union {
-  external Pointer<Void> _Object;
+  external Pointer<Void> _object;
 
   @Bool()
-  external bool _Boolean;
+  external bool _boolean;
 
   @Uint32()
-  external int _UInt32;
+  external int _uInt32;
 
-  external Pointer<Utf8> _String;
+  external Pointer<Utf8> _string;
 
-  external Pointer<Void> _Null;
+  external Pointer<Void> _null;
 
   String getString() {
-    return _String.toDartString();
+    return _string.toDartString();
   }
 
   int getUInt32() {
-    return _UInt32.toUnsigned(32);
+    return _uInt32.toUnsigned(32);
   }
 
   bool getBoolean() {
-    return _Boolean;
+    return _boolean;
   }
 
   Pointer<Void> getObject() {
-    return _Object;
+    return _object;
   }
 }
 

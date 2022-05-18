@@ -1,7 +1,6 @@
-use crate::types::{PtrString, PtrU32, PtrVoid};
+use crate::types::{PtrString, PtrVoid};
 use crate::utils::str_to_ptr_c_char;
-use std::ffi::{c_void, CString};
-use std::os::raw::c_uint;
+use std::ffi::{CString};
 use std::ptr::null_mut;
 
 #[repr(C)]
@@ -10,8 +9,6 @@ pub struct Response {
     pub error_message: PtrString,
     pub data: Value,
 }
-
-pub type PtrValue = *mut Value;
 
 #[repr(C)]
 pub union Value {
@@ -68,7 +65,3 @@ impl Response {
 
 pub const SUCCESS: u32 = 0;
 pub const ERROR: u32 = 1;
-
-pub fn response_to_ptr_c_void(response: &mut Response) -> PtrVoid {
-    response as *mut _ as *mut c_void
-}

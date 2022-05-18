@@ -331,7 +331,6 @@ mod tests {
     use crate::traits::{From, To, UR};
     use hex;
     use hex::FromHex;
-    use std::any::Any;
 
     #[test]
     fn test_encode() {

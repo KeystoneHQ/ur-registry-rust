@@ -1,14 +1,8 @@
-use crate::response::{PtrResponse, Response, Value, ERROR, SUCCESS};
-use crate::types::{ErrorCallback, PtrString, PtrVoid};
-use crate::utils::{str_to_ptr_c_char, u32_to_ptr_u32};
+use crate::response::{PtrResponse, Response, Value};
+use crate::types::{PtrString};
 use hex::encode;
-use std::ffi::{c_void, CStr, CString};
-use std::fmt::format;
-use std::os::raw::{c_char, c_uint};
-use std::ptr::{null, null_mut};
-use std::str::Utf8Error;
+use std::ffi::{c_void, CStr};
 use ur::Decoder;
-use ur_registry::traits::From;
 
 #[no_mangle]
 pub extern "C" fn ur_decoder_new() -> PtrResponse {
