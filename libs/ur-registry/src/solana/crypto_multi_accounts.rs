@@ -175,4 +175,41 @@ mod tests {
         assert_eq!(crypto_multi_accounts.device, Some("keystone".to_string()));
         assert_eq!(crypto_multi_accounts.keys.len(), 1);
     }
+
+    #[test]
+    fn test_decode_multi() {
+        let mut decoder = ur::Decoder::default();
+        decoder.receive("UR:CRYPTO-MULTI-ACCOUNTS/OTADCYCNTIFDWTAOLNTAADDLOXAOWKAXHDCXSPTPFWOEWNLBTSPKRPAYTODMONECOLWLHDURZSCXSGYNINQDFLRHBYSSCHCFIHGUAMTAADDYOTADLOCSDWYKCFADYKYKAEYKAEYKAOCYCNTIFDWTAXAHASISGRIHKKJKJYJLJTIHTAADDLOXAOWKAXHDCXBSMDKOCXPRDERDVORHGSLFUTTYRTMUMKFTIOENGOGORLEMWPKIUOBYCHVACEJPVTAMTAADDYOTADLOCSDWYKCFADYKYKADYKAEYKAOCYCNTIFDWTAXAHASISGRIHKKJKJYJLJTIHTAADDLOXAOWKAXHDCXWZDKVSECEOURRKKEVWWYRDFGAELYNNPYMDPRAATKAYJKTYRFHSTSBANYZMGLGHPMAMTAADDYOTADLOCSDWYKCFADYKYKAOYKAEYKAOCYCNTIFDWTAXAHASISGRIHKKJKJYJLJTIHTAADDLOXAOWKAXHDCXGLAAUECPATIEADBGPKJNUEYKNNTLADOXTIMURTGWCPAYGSZSYABTVLISECSOJYTKAMTAADDYOTADLOCSDWYKCFADYKYKAXYKAEYKAOCYCNTIFDWTAXAHASISGRIHKKJKJYJLJTIHTAADDLOXAOWKAXHDCXMUJLWLCKPYPMKBNEDPIOGRDINYRYIYWLECBAONHDPMSPBGFYTDEHASKEMTLDFZINAMTAADDYOTADLOCSDWYKCFADYKYKAAYKAEYKAOCYCNTIFDWTAXAHASISGRIHKKJKJYJLJTIHTAADDLOXAOWKAXHDCXKEOLGWPEFSRSKEEMGAONWLMWVWKOISTPPEJZFRVEPKFWVDGAAMAHBTTIJSFSGSLDAMTAADDYOTADLOCSDWYKCFADYKYKAHYKAEYKAOCYCNTIFDWTAXAHASISGRIHKKJKJYJLJTIHAXISGRIHKKJKJYJLJTIHLDMEDATK");
+        let value = decoder.message().unwrap().unwrap();
+        let crypto_multi_accounts = CryptoMultiAccounts::from_bytes(value).unwrap();
+        println!(
+            "{}",
+            crypto_multi_accounts
+                .keys
+                .get(0)
+                .unwrap()
+                .get_account_index(3)
+                .unwrap()
+        );
+        println!(
+            "{}",
+            crypto_multi_accounts
+                .keys
+                .get(0)
+                .unwrap()
+                .get_origin()
+                .unwrap()
+                .get_path()
+                .unwrap()
+        );
+        println!(
+            "{}",
+            crypto_multi_accounts
+                .keys
+                .get(0)
+                .unwrap()
+                .get_depth()
+                .unwrap()
+        );
+    }
 }

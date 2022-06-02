@@ -136,6 +136,22 @@ impl CryptoHDKey {
         output.append(key.as_mut()); //33
         bs58::encode(output).with_check().into_string()
     }
+
+    pub fn get_account_index(&self, level: u32) -> Option<u32> {
+        self.origin
+            .clone()
+            .map_or(None, |o| match o.get_components().len() {
+                0 => None,
+                _ => o
+                    .get_components()
+                    .get(level as usize)
+                    .and_then(|v| v.get_index()),
+            })
+    }
+
+    pub fn get_depth(&self) -> Option<u32> {
+        self.origin.clone().map_or(None, |v| v.get_depth())
+    }
 }
 
 impl RegistryItem for CryptoHDKey {

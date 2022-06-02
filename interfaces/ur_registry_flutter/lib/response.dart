@@ -32,6 +32,10 @@ class Data extends Union {
   Pointer<Void> getObject() {
     return _object;
   }
+
+  bool isNull() {
+    return _null.address == 0;
+  }
 }
 
 class Response extends Struct {
@@ -39,6 +43,8 @@ class Response extends Struct {
   external int statusCode;
 
   external Pointer<Utf8> errorMessage;
+
+  external Pointer<Utf8> valueType;
 
   external Data data;
 
@@ -50,8 +56,32 @@ class Response extends Struct {
     return statusCode == error;
   }
 
+  Pointer<Void>? getObject() {
+    throwIfPresent();
+    if (valueType.toDartString() == "OBJECT") return data._object;
+    return null;
+  }
+
+  bool? getBoolean() {
+    throwIfPresent();
+    if (valueType.toDartString() == "BOOLEAN") return data._boolean;
+    return null;
+  }
+
+  int? getUint32() {
+    throwIfPresent();
+    if(valueType.toDartString() == "UINT32") return data._uInt32;
+    return null;
+  }
+
+  String? getString() {
+    throwIfPresent();
+    if(valueType.toDartString() == "STRING") return data._string.toDartString();
+    return null;
+  }
+
   void throwIfPresent() {
-    if(isError()) {
+    if (isError()) {
       throw Exception(getErrorMessage());
     }
   }

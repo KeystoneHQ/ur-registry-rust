@@ -19,6 +19,19 @@ pub enum SignType {
     Message,
 }
 
+impl SignType {
+    pub fn from_u32(i: u32) -> Result<Self, String> {
+        match i {
+            1 => Ok(SignType::Transaction),
+            2 => Ok(SignType::Message),
+            x => Err(format!(
+                "invalid value for sign_type in sol-sign-request, expected 1 or 2, received {:?}",
+                x
+            )),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct SolSignRequest {
     request_id: Option<Bytes>,

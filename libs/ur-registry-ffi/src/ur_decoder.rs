@@ -1,15 +1,12 @@
 use crate::response::{PtrResponse, Response, Value};
-use crate::types::{PtrString};
+use crate::types::PtrString;
 use hex::encode;
 use std::ffi::{c_void, CStr};
 use ur::Decoder;
 
 #[no_mangle]
 pub extern "C" fn ur_decoder_new() -> PtrResponse {
-    Response::success(Value::object(
-        Box::into_raw(Box::new(ur::Decoder::default())) as *mut c_void,
-    ))
-    .c_ptr()
+    Response::success_object(Box::into_raw(Box::new(ur::Decoder::default())) as *mut c_void).c_ptr()
 }
 
 #[no_mangle]
@@ -20,13 +17,13 @@ pub extern "C" fn ur_decoder_receive(decoder: &mut Decoder, ur: PtrString) -> Pt
     };
     match decoder.receive(ur_str.as_str()) {
         Err(error) => Response::error(error.to_string()).c_ptr(),
-        _ => Response::success(Value::null()).c_ptr(),
+        _ => Response::success_null().c_ptr(),
     }
 }
 
 #[no_mangle]
 pub extern "C" fn ur_decoder_is_complete(decoder: &mut Decoder) -> PtrResponse {
-    Response::success(Value::boolean(decoder.complete())).c_ptr()
+    Response::success_boolean(decoder.complete()).c_ptr()
 }
 
 fn get_result(decoder: &mut Decoder) -> Result<Vec<u8>, String> {
@@ -42,7 +39,7 @@ fn get_result(decoder: &mut Decoder) -> Result<Vec<u8>, String> {
 #[no_mangle]
 pub extern "C" fn ur_decoder_result(decoder: &mut Decoder) -> PtrResponse {
     match get_result(decoder) {
-        Ok(message) => Response::success(Value::string(encode(message))).c_ptr(),
+        Ok(message) => Response::success_string(encode(message)).c_ptr(),
         Err(error) => Response::error(error).c_ptr(),
     }
 }
