@@ -108,6 +108,23 @@ impl CryptoKeyPath {
                 .join("/"),
         )
     }
+
+    pub fn from_path(path: String, fingerprint: Option<Fingerprint>) -> Result<Self, String> {
+        let remove_prefix = path.replace("M/", "").replace("m/", "");
+        let chunks = remove_prefix.split('/').map(|split| {
+            match split.chars().last() {
+                Some('\'') => {
+                    let mut remove_quote = split.to_string();
+                    remove_quote.pop();
+                    Ok(PathComponent { hardened: true, index: Some(remove_quote.parse().unwrap()), wildcard: false })
+                }
+                _ => {
+                    Err(format!("Invalid Path"))
+                }
+            }
+        }).collect::<Result<Vec<PathComponent>, String>>()?;
+        Ok(CryptoKeyPath { components: chunks, source_fingerprint: fingerprint, depth: None })
+    }
 }
 
 impl To for CryptoKeyPath {

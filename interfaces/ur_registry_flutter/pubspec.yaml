@@ -8,9 +8,11 @@ environment:
   flutter: ">=2.5.0"
 
 dependencies:
+  convert: ^3.0.2
   ffi: ^1.1.2
   flutter:
     sdk: flutter
+  uuid: ^3.0.6
 
 dev_dependencies:
   flutter_test:

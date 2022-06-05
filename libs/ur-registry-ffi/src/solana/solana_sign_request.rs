@@ -5,7 +5,7 @@ use hex::FromHex;
 use std::ffi::CStr;
 use ur_registry::crypto_key_path::CryptoKeyPath;
 use ur_registry::solana::sol_sign_request::{SignType, SolSignRequest};
-use ur_registry::traits::From;
+use ur_registry::traits::{From, To, UR};
 
 pub fn resolve(data: Vec<u8>) -> PtrResponse {
     match SolSignRequest::from_bytes(data) {
@@ -18,7 +18,8 @@ pub fn resolve(data: Vec<u8>) -> PtrResponse {
 pub extern "C" fn solana_sign_request_new(
     request_id: PtrString,
     sign_data: PtrString,
-    derivation_path: &mut CryptoKeyPath,
+    path: PtrString,
+    xfp: u32,
     address: PtrString,
     origin: PtrString,
     sign_type: u32,
@@ -43,7 +44,15 @@ pub extern "C" fn solana_sign_request_new(
         Ok(v) => v,
         Err(e) => return e.c_ptr(),
     };
-    let derivation_path = (*derivation_path).clone();
+    let path = match convert_ptr_string_to_string(path).map_err(|e| Response::error(e)) {
+        Ok(v) => v,
+        Err(e) => return e.c_ptr(),
+    };
+    let derivation_path = match CryptoKeyPath::from_path(path, Some(xfp.to_be_bytes()))
+        .map_err(|e| Response::error(e)) {
+        Ok(v) => v,
+        Err(e) => return e.c_ptr(),
+    };
     let request = SolSignRequest::new(
         Some(request_id),
         sign_data,
@@ -53,4 +62,10 @@ pub extern "C" fn solana_sign_request_new(
         sign_type,
     );
     Response::success_object(Box::into_raw(Box::new(request)) as PtrVoid).c_ptr()
+}
+
+#[no_mangle]
+pub extern "C" fn solana_sign_request_get_ur_encoder(sol_sign_request: &mut SolSignRequest) -> PtrResponse {
+    let ur_encoder = sol_sign_request.to_ur_encoder(400);
+    Response::success_object(Box::into_raw(Box::new(ur_encoder)) as PtrVoid).c_ptr()
 }

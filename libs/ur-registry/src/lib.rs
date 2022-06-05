@@ -1,3 +1,5 @@
+extern crate core;
+
 mod cbor_value;
 pub mod crypto_coin_info;
 pub mod crypto_ec_key;

@@ -4,6 +4,11 @@ import 'package:ffi/ffi.dart';
 const success = 0;
 const error = 1;
 
+const typeObject = "OBJECT";
+const typeBoolean = "BOOLEAN";
+const typeUInt32 = "UINT32";
+const typeString = "STRING";
+
 class Data extends Union {
   external Pointer<Void> _object;
 
@@ -56,28 +61,32 @@ class Response extends Struct {
     return statusCode == error;
   }
 
-  Pointer<Void>? getObject() {
-    throwIfPresent();
-    if (valueType.toDartString() == "OBJECT") return data._object;
-    return null;
+  void checkValueType(String target) {
+    if(valueType.toDartString() != target) throw Exception("Wrong response type, expected $target, received ${valueType.toDartString()}");
   }
 
-  bool? getBoolean() {
+  Pointer<Void> getObject() {
     throwIfPresent();
-    if (valueType.toDartString() == "BOOLEAN") return data._boolean;
-    return null;
+    checkValueType(typeObject);
+    return data._object;
   }
 
-  int? getUint32() {
+  bool getBoolean() {
     throwIfPresent();
-    if(valueType.toDartString() == "UINT32") return data._uInt32;
-    return null;
+    checkValueType(typeBoolean);
+    return data._boolean;
   }
 
-  String? getString() {
+  int getUint32() {
     throwIfPresent();
-    if(valueType.toDartString() == "STRING") return data._string.toDartString();
-    return null;
+    checkValueType(typeUInt32);
+    return data._uInt32;
+  }
+
+  String getString() {
+    throwIfPresent();
+    checkValueType(typeString);
+    return data._string.toDartString();
   }
 
   void throwIfPresent() {

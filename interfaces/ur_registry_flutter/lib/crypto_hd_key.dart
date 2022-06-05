@@ -46,8 +46,6 @@ class CryptoHDKey extends NativeObject {
   int? getAccountIndex(int level) {
     final response = fnGetAccountIndex(nativeObject, level).ref;
     response.throwIfPresent();
-    print("getAccountIndex, ${response.data}");
-    print("getAccountIndex, ${response.data.isNull()}");
     if (response.data.isNull()) return null;
     return response.data.getUInt32();
   }
