@@ -15,7 +15,12 @@ pub fn resolve(data: Vec<u8>) -> PtrResponse {
 }
 
 #[no_mangle]
-pub extern "C" fn solana_sign_request_new(
+pub extern "C" fn solana_sign_request_new() -> PtrResponse {
+    Response::success_object(Box::into_raw(Box::new(SolSignRequest::default())) as PtrVoid).c_ptr()
+}
+
+#[no_mangle]
+pub extern "C" fn solana_sign_request_construct(
     request_id: PtrString,
     sign_data: PtrString,
     path: PtrString,

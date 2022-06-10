@@ -1,7 +1,7 @@
 import 'dart:ffi';
-import 'package:ur_registry_flutter/crypto_hd_key.dart';
+import 'package:ur_registry_flutter/registries/crypto_hd_key.dart';
 import 'package:ur_registry_flutter/response.dart';
-import '../native_object.dart';
+import '../../native_object.dart';
 
 const nativePrefix = "solana_crypto_multi_accounts";
 
@@ -13,7 +13,9 @@ typedef NativeGetKeysLen = Pointer<Response> Function(Pointer<Void>);
 typedef GetKeysLen = Pointer<Response> Function(Pointer<Void>);
 
 class CryptoMultiAccounts extends NativeObject {
-  CryptoMultiAccounts(Pointer<Void> object) : super(object);
+  CryptoMultiAccounts(Pointer<Void> object) : super(){
+    nativeObject = object;
+  }
 
   late final NativeGetDevice nativeGetDevice = lib
       .lookup<NativeFunction<NativeGetMasterFingerprint>>(

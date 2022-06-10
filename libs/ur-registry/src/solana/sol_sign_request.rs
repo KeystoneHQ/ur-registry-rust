@@ -19,6 +19,12 @@ pub enum SignType {
     Message,
 }
 
+impl Default for SignType {
+    fn default() -> Self {
+        SignType::Transaction
+    }
+}
+
 impl SignType {
     pub fn from_u32(i: u32) -> Result<Self, String> {
         match i {
@@ -32,7 +38,7 @@ impl SignType {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct SolSignRequest {
     request_id: Option<Bytes>,
     sign_data: Bytes,
@@ -43,6 +49,34 @@ pub struct SolSignRequest {
 }
 
 impl SolSignRequest {
+    pub fn default() -> Self {
+        Default::default()
+    }
+
+    pub fn set_request_id(&mut self, id: Bytes) {
+        self.request_id = Some(id);
+    }
+
+    pub fn set_sign_data(&mut self, data: Bytes) {
+        self.sign_data = data;
+    }
+
+    pub fn set_derivation_path(&mut self, derivation_path: CryptoKeyPath) {
+        self.derivation_path = derivation_path;
+    }
+
+    pub fn set_address(&mut self, address: Bytes) {
+        self.address = Some(address)
+    }
+
+    pub fn set_origin(&mut self, origin: String) {
+        self.origin = Some(origin)
+    }
+
+    pub fn set_sign_type(&mut self, sign_type: SignType) {
+        self.sign_type = sign_type
+    }
+
     pub fn new(
         request_id: Option<Bytes>,
         sign_data: Bytes,

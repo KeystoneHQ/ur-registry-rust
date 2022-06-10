@@ -14,6 +14,22 @@ pub struct SolSignature {
 }
 
 impl SolSignature {
+    pub fn default() -> Self {
+        Default::default()
+    }
+
+    pub fn set_request_id(&mut self, id: Bytes) {
+        self.request_id = Some(id);
+    }
+
+    pub fn set_signature(&mut self, signature: Bytes) {
+        self.signature = signature;
+    }
+
+    pub fn new(request_id: Option<Bytes>, signature: Bytes) -> Self {
+        SolSignature { request_id, signature }
+    }
+
     pub fn get_request_id(&self) -> Option<Bytes> {
         self.request_id.clone()
     }

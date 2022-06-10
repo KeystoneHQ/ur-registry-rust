@@ -18,13 +18,25 @@ pub enum Network {
     TestNet = 1,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct CryptoCoinInfo {
     coin_type: Option<CoinType>,
     network: Option<Network>,
 }
 
 impl CryptoCoinInfo {
+    pub fn default() -> Self {
+        Default::default()
+    }
+
+    pub fn set_coin_type(&mut self, coin_type: CoinType) {
+        self.coin_type = Some(coin_type)
+    }
+
+    pub fn set_network(&mut self, network: Network) {
+        self.network = Some(network)
+    }
+
     pub fn new(coin_type: Option<CoinType>, network: Option<Network>) -> CryptoCoinInfo {
         CryptoCoinInfo { coin_type, network }
     }

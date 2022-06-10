@@ -3,19 +3,36 @@ use crate::registry_types::{RegistryType, CRYPTO_ECKEY};
 use crate::traits::{From, RegistryItem, To};
 use serde_cbor::{from_slice, to_vec, Value};
 use std::collections::BTreeMap;
+use crate::types::Bytes;
 
 const CURVE: i128 = 1;
 const PRIVATE: i128 = 2;
 const DATA: i128 = 3;
 
-#[derive(Default)]
+#[derive(Default, Clone, Debug)]
 pub struct CryptoECKey {
     curve: Option<i128>,
     is_private_key: Option<bool>,
-    data: Vec<u8>,
+    data: Bytes,
 }
 
 impl CryptoECKey {
+    pub fn default() {
+        Default::default()
+    }
+
+    pub fn set_curve(&mut self, curve: i128) {
+        self.curve = Some(curve)
+    }
+
+    pub fn set_is_private_key(&mut self, flag: bool) {
+        self.is_private_key = Some(flag)
+    }
+
+    pub fn set_data(&mut self, data: Bytes) {
+        self.data = data;
+    }
+
     pub fn get_curve(&self) -> i128 {
         match self.curve {
             Some(x) => x,
@@ -126,7 +143,7 @@ mod tests {
         let bytes = Vec::from_hex(
             "A202F50358208C05C4B4F3E88840A4F4B5F155CFD69473EA169F3D0431B7A6787A23777F08AA",
         )
-        .unwrap();
+            .unwrap();
         let crypto_ec_key = CryptoECKey::from_bytes(bytes).unwrap();
         assert_eq!(crypto_ec_key.get_curve(), 0);
         assert_eq!(crypto_ec_key.get_is_private_key(), true);

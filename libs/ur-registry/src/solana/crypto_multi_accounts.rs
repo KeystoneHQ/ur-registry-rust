@@ -10,6 +10,7 @@ const MASTER_FINGERPRINT: i128 = 1;
 const KEYS: i128 = 2;
 const DEVICE: i128 = 3;
 
+#[derive(Default, Clone, Debug)]
 pub struct CryptoMultiAccounts {
     master_fingerprint: Fingerprint,
     keys: Vec<CryptoHDKey>,
@@ -17,6 +18,26 @@ pub struct CryptoMultiAccounts {
 }
 
 impl CryptoMultiAccounts {
+    pub fn default() -> Self {
+        Default::default()
+    }
+
+    pub fn set_master_fingerprint(&mut self, master_fingerprint: Fingerprint) {
+        self.master_fingerprint = master_fingerprint;
+    }
+
+    pub fn set_keys(&mut self, keys: Vec<CryptoHDKey>) {
+        self.keys = keys;
+    }
+
+    pub fn add_key(&mut self, key: CryptoHDKey) {
+        self.keys.push(key)
+    }
+
+    pub fn set_device(&mut self, device: String) {
+        self.device = Some(device);
+    }
+
     pub fn new(
         master_fingerprint: Fingerprint,
         keys: Vec<CryptoHDKey>,

@@ -1,7 +1,12 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:ur_registry_flutter/base.dart';
+import 'package:ur_registry_flutter/native_object.dart';
+import 'package:ur_registry_flutter/registries/solana/crypto_multi_accounts.dart';
+import 'package:ur_registry_flutter/registries/solana/sol_signature.dart';
 import 'package:ur_registry_flutter/response.dart';
+
+import 'registries/solana/sol_sign_request.dart';
 
 const nativePrefix = "ur_decoder";
 
@@ -55,9 +60,14 @@ class URDecoder extends Base {
     return resultStr;
   }
 
-  Pointer<Void> resolve(String target) {
+  NativeObject resolve(String target) {
     final response = nativeResolve(decoder, target.toNativeUtf8()).ref;
-    response.throwIfPresent();
-    return response.data.getObject();
+    final nativeObject = response.getObject();
+    switch(target) {
+      case "sol-sign-request": return SolSignRequest(nativeObject);
+      case "sol-signature": return SolSignature(nativeObject);
+      case "crypto_multi_accounts": return CryptoMultiAccounts(nativeObject);
+      default: throw Exception("type $target is not supported");
+    }
   }
 }

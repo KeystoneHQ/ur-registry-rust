@@ -1,7 +1,7 @@
 import 'dart:ffi';
 import 'package:ur_registry_flutter/native_object.dart';
 
-import 'response.dart';
+import '../response.dart';
 
 const nativePrefix = "crypto_hd_key";
 
@@ -14,7 +14,9 @@ typedef NativeGetPath = Pointer<Response> Function(Pointer<Void>);
 typedef NativeGetDepth = Pointer<Response> Function(Pointer<Void>);
 
 class CryptoHDKey extends NativeObject {
-  CryptoHDKey(Pointer<Void> object) : super(object);
+  CryptoHDKey(Pointer<Void> object) : super() {
+    nativeObject = object;
+  }
 
   late NativeGetKeyData nativeGetKeyData = lib
       .lookup<NativeFunction<NativeGetKeyData>>("${nativePrefix}_get_key_data")

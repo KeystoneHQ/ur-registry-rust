@@ -61,7 +61,7 @@ impl PathComponent {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct CryptoKeyPath {
     components: Vec<PathComponent>,
     source_fingerprint: Option<Fingerprint>,

@@ -11,7 +11,9 @@ typedef NativeGetSignature = Pointer<Response> Function(Pointer<Void>);
 const nativePrefix = "solana_signature";
 
 class SolSignature extends NativeObject {
-  SolSignature(Pointer<Void> object) : super(object);
+  SolSignature(Pointer<Void> object) : super() {
+    nativeObject = object;
+  }
 
   late NativeGetRequestId nativeGetRequestId = lib
       .lookup<NativeFunction<NativeGetRequestId>>(
