@@ -18,6 +18,16 @@ typedef NativeIsComplete = Pointer<Response> Function(Pointer<Void>);
 typedef NativeResolve = Pointer<Response> Function(
     Pointer<Void>, Pointer<Utf8>);
 
+enum SupportedType {
+  cryptoMultiAccounts,
+  solSignRequest,
+  solSignature,
+}
+
+const _cryptoMultiAccounts = 'crypto-multi-accounts';
+const _solSignRequest = 'sol-sign-request';
+const _solSignature = 'sol-signature';
+
 class URDecoder extends Base {
   late NativeNew nativeNew =
       lib.lookup<NativeFunction<NativeNew>>("${nativePrefix}_new").asFunction();
@@ -60,14 +70,18 @@ class URDecoder extends Base {
     return resultStr;
   }
 
-  NativeObject resolve(String target) {
-    final response = nativeResolve(decoder, target.toNativeUtf8()).ref;
-    final nativeObject = response.getObject();
-    switch(target) {
-      case "sol-sign-request": return SolSignRequest(nativeObject);
-      case "sol-signature": return SolSignature(nativeObject);
-      case "crypto_multi_accounts": return CryptoMultiAccounts(nativeObject);
-      default: throw Exception("type $target is not supported");
+  NativeObject resolve(SupportedType type) {
+    switch (type) {
+      case SupportedType.cryptoMultiAccounts:
+        final response = nativeResolve(decoder, _cryptoMultiAccounts.toNativeUtf8()).ref;
+        return CryptoMultiAccounts(response.getObject());
+      case SupportedType.solSignRequest:
+        final response = nativeResolve(decoder, _solSignRequest.toNativeUtf8()).ref;
+        return SolSignRequest(response.getObject());
+      case SupportedType.solSignature:
+        final response = nativeResolve(decoder, _solSignature.toNativeUtf8()).ref;
+        return SolSignature(response.getObject());
+      default: throw Exception("type $type is not supported");
     }
   }
 }

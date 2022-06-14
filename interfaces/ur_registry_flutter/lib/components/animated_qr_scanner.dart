@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:ur_registry_flutter/native_object.dart';
@@ -12,7 +14,7 @@ typedef SuccessCallback = void Function(NativeObject);
 typedef FailureCallback = void Function(String);
 
 class _Cubit extends Cubit<_State> {
-  late final String target;
+  late final SupportedType target;
   final SuccessCallback onSuccess;
   final FailureCallback onFailed;
   URDecoder urDecoder = URDecoder();
@@ -40,7 +42,7 @@ class _Cubit extends Cubit<_State> {
 }
 
 class AnimatedQRScanner extends StatelessWidget {
-  final String target;
+  final SupportedType target;
   final SuccessCallback onSuccess;
   final FailureCallback onFailed;
 
@@ -76,8 +78,20 @@ class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
   }
 
   @override
+  Future<void> reassemble() async {
+    if (Platform.isAndroid) {
+      await controller!.pauseCamera();
+    }
+    controller!.resumeCamera();
+    super.reassemble();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return QRView(key: keyQr, onQRViewCreated: onQRViewCreated);
+    return QRView(key: keyQr, onQRViewCreated: onQRViewCreated, overlay: QrScannerOverlayShape(
+      borderColor: const Color(0xFFFF842D),
+      borderWidth: 10,
+    ),);
   }
 
   Future<void> onQRViewCreated(QRViewController controller) async {
@@ -89,8 +103,6 @@ class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
     try {
       final Barcode code = await controller.scannedDataStream.first;
       _cubit.receiveQRCode(code.code);
-      await this.controller!.pauseCamera();
-      Navigator.pop(context, code.code);
     } catch (e) {
       _cubit.onFailed("Error when receiving UR: $e");
       _cubit.reset();
