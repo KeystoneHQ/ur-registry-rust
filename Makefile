@@ -24,6 +24,9 @@ generate_android:
 	@echo "3: x86"
 	cargo ndk -t x86 build -p ur-registry-ffi --release
 	@echo "Android buildup"
+	cp ./target/aarch64-linux-android/release/libur_registry_ffi.so ./interfaces/ur_registry_flutter/android/src/main/jniLibs/arm64-v8a/libur_registry_ffi.so
+	cp ./target/armv7-linux-androideabi/release/libur_registry_ffi.so ./interfaces/ur_registry_flutter/android/src/main/jniLibs/armeabi-v7a/libur_registry_ffi.so
+	cp ./target/i686-linux-android/release/libur_registry_ffi.so ./interfaces/ur_registry_flutter/android/src/main/jniLibs/x86/libur_registry_ffi.so
 
 generate_ios:
 	@echo "Step: Generate iOS builds"

@@ -1,7 +1,7 @@
 name: ur_registry_flutter
-description: A new flutter plugin project.
-version: 0.0.1
-homepage:
+description: An ffi bridge for ur_registry_rust and flutter.
+version: 0.0.1-dev.0
+homepage: https://github.com/KeystoneHQ/ur-registry-rust/interfaces/ur_registry_flutter
 
 environment:
   sdk: ">=2.16.2 <3.0.0"
