@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-debug: clean_up generate_android_debug
+debug: clean_up generate_android_debug generate_ios_debug
 
 release: clean_up generate_android generate_ios
 
@@ -8,6 +8,7 @@ clean_up:
 	@echo "Step: Removing target"
 	rm -rf ./target
 	rm -rf ./interfaces/ur_registry_flutter/android/src/main/jniLibs
+	rm -f ./interfaces/ur_registry_flutter/ios/libur_registry_ffi.a
 	mkdir ./interfaces/ur_registry_flutter/android/src/main/jniLibs
 	mkdir ./interfaces/ur_registry_flutter/android/src/main/jniLibs/arm64-v8a
 	mkdir ./interfaces/ur_registry_flutter/android/src/main/jniLibs/armeabi-v7a
@@ -27,6 +28,12 @@ generate_android:
 generate_ios:
 	@echo "Step: Generate iOS builds"
 	cargo lipo --release
+	cp ./target/universal/release/libur_registry_ffi.a ./interfaces/ur_registry_flutter/ios/
+
+generate_ios_debug:
+	@echo "Step: Generate iOS builds"
+	cargo lipo
+	cp ./target/universal/debug/libur_registry_ffi.a ./interfaces/ur_registry_flutter/ios/
 
 generate_android_debug:
 	@echo "Step: Generating Android builds"

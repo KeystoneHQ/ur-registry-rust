@@ -2,3 +2,4 @@
 .ndk_home
 .DS_Store
 interfaces/ur_registry_flutter/android/src/main/jniLibs/
+interfaces/ur_registry_flutter/ios/libur_registry_ffi.a
