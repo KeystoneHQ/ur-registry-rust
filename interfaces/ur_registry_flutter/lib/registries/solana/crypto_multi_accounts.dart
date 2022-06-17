@@ -37,14 +37,12 @@ class CryptoMultiAccounts extends NativeObject {
 
   String getDevice() {
     final response = nativeGetDevice(nativeObject).ref;
-    response.throwIfPresent();
-    return response.data.getString();
+    return response.getString();
   }
 
   String getMasterFingerprint() {
     final response = nativeGetMasterFingerprint(nativeObject).ref;
-    response.throwIfPresent();
-    return response.data.getString();
+    return response.getString();
   }
 
   List<CryptoHDKey> getKeys() {

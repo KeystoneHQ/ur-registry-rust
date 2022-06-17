@@ -41,42 +41,31 @@ class CryptoHDKey extends NativeObject {
 
   String getKeyData() {
     final response = nativeGetKeyData(nativeObject).ref;
-    response.throwIfPresent();
-    return response.data.getString();
+    return response.getString();
   }
 
-  int? getAccountIndex(int level) {
+  int getAccountIndex(int level) {
     final response = fnGetAccountIndex(nativeObject, level).ref;
-    response.throwIfPresent();
-    if (response.data.isNull()) return null;
-    return response.data.getUInt32();
+    return response.getUint32();
   }
 
-  String? getName() {
+  String getName() {
     final response = nativeGetName(nativeObject).ref;
-    response.throwIfPresent();
-    if (response.data.isNull()) return null;
-    return response.data.getString();
+    return response.getString();
   }
 
-  String? getPath() {
+  String getPath() {
     final response = nativeGetPath(nativeObject).ref;
-    response.throwIfPresent();
-    if (response.data.isNull()) return null;
-    return response.data.getString();
+    return response.getString();
   }
 
-  String? getSourceFingerprint() {
+  String getSourceFingerprint() {
     final response = nativeGetSourceFingerprint(nativeObject).ref;
-    response.throwIfPresent();
-    if (response.data.isNull()) return null;
-    return response.data.getString();
+    return response.getString();
   }
 
-  int? getDepth() {
+  int getDepth() {
     final response = nativeGetDepth(nativeObject).ref;
-    response.throwIfPresent();
-    if (response.data.isNull()) return null;
-    return response.data.getUInt32();
+    return response.getUint32();
   }
 }

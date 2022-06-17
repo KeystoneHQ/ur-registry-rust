@@ -48,8 +48,7 @@ class URDecoder extends Base {
 
   URDecoder() {
     final response = nativeNew().ref;
-    response.throwIfPresent();
-    decoder = response.data.getObject();
+    decoder = response.getObject();
   }
 
   void receive(String ur) {
@@ -59,15 +58,12 @@ class URDecoder extends Base {
 
   bool isComplete() {
     final response = nativeIsComplete(decoder).ref;
-    response.throwIfPresent();
-    return response.data.getBoolean();
+    return response.getBoolean();
   }
 
   String result() {
     final response = nativeResult(decoder).ref;
-    response.throwIfPresent();
-    final resultStr = response.data.getString();
-    return resultStr;
+    return response.getString();
   }
 
   NativeObject resolve(SupportedType type) {
