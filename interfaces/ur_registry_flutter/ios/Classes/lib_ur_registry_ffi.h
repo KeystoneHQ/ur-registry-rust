@@ -63,6 +63,8 @@ PtrResponse solana_sign_request_construct(PtrString request_id,
 
 PtrResponse solana_sign_request_get_ur_encoder(void *sol_sign_request);
 
+PtrResponse solana_sign_request_get_request_id(void *sol_sign_request);
+
 PtrResponse solana_signature_get_signature(void *solana_signarure);
 
 PtrResponse solana_signature_get_request_id(void *solana_signature);

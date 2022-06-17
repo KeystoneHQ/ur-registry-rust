@@ -74,3 +74,10 @@ pub extern "C" fn solana_sign_request_get_ur_encoder(sol_sign_request: &mut SolS
     let ur_encoder = sol_sign_request.to_ur_encoder(400);
     Response::success_object(Box::into_raw(Box::new(ur_encoder)) as PtrVoid).c_ptr()
 }
+
+#[no_mangle]
+pub extern "C" fn solana_sign_request_get_request_id(sol_sign_request: &mut SolSignRequest) -> PtrResponse {
+    sol_sign_request.get_request_id().map_or(Response::success_null().c_ptr(), |id| {
+        Response::success_string(hex::encode(id)).c_ptr()
+    })
+}
