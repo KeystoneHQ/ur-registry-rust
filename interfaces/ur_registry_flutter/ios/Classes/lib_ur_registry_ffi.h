@@ -53,12 +53,12 @@ PtrResponse solana_crypto_multi_accounts_get_key(void *crypto_multi_accounts,
 
 PtrResponse solana_sign_request_new(void);
 
-PtrResponse solana_sign_request_construct(PtrString request_id,
-                                          PtrString sign_data,
-                                          PtrString path,
+PtrResponse solana_sign_request_construct(void *request_id,
+                                          void *sign_data,
+                                          void *path,
                                           uint32_t xfp,
-                                          PtrString address,
-                                          PtrString origin,
+                                          void *address,
+                                          void *origin,
                                           uint32_t sign_type);
 
 PtrResponse solana_sign_request_get_ur_encoder(void *sol_sign_request);
@@ -71,13 +71,13 @@ PtrResponse solana_signature_get_request_id(void *solana_signature);
 
 PtrResponse ur_decoder_new(void);
 
-PtrResponse ur_decoder_receive(void *decoder, PtrString ur);
+PtrResponse ur_decoder_receive(void *decoder, void *ur);
 
 PtrResponse ur_decoder_is_complete(void *decoder);
 
 PtrResponse ur_decoder_result(void *decoder);
 
-PtrResponse ur_decoder_resolve(void *decoder, PtrString target_type);
+PtrResponse ur_decoder_resolve(void *decoder, void *target_type);
 
 void utils_free(void *any_ptr);
 
