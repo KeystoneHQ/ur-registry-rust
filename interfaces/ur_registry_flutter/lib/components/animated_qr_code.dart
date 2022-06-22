@@ -9,20 +9,35 @@ abstract class _State {}
 
 class _InitialState extends _State {}
 
+class _AnimatedQRDataState extends _State {
+  final String data;
+  _AnimatedQRDataState(this.data);
+}
+
 class _Cubit extends Cubit<_State> {
   final UREncoder urEncoder;
   final AnimatedQRCodeStyle style;
 
-  late String currentQR;
+  late String _currentQR;
+  late Timer timer;
 
   _Cubit(this.urEncoder, this.style) : super(_InitialState());
 
   void initial() {
-    currentQR = urEncoder.nextPart();
-    Timer.periodic(const Duration(milliseconds: 100), (_) {
-      currentQR = urEncoder.nextPart();
+    _currentQR = urEncoder.nextPart();
+    emit(_AnimatedQRDataState(_currentQR));
+    timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
+      _currentQR = urEncoder.nextPart();
+      emit(_AnimatedQRDataState(_currentQR));
     });
   }
+
+  @override
+  Future<void> close() async {
+    timer.cancel();
+  }
+
+  String get currentQR => _currentQR;
 }
 
 class AnimatedQRCodeStyle {
@@ -76,10 +91,25 @@ class _AnimatedQRCodeState extends State<_AnimatedQRCode> {
 
   @override
   Widget build(BuildContext context) {
-    return QrImage(
-      data: _cubit.currentQR,
-      size: _cubit.style.size,
-      backgroundColor: const Color(0xFFFFFFFF),
-    );
+    return BlocBuilder<_Cubit, _State>(builder: (context, state) {
+      if(state is _AnimatedQRDataState) {
+        return QrImage(
+          data: state.data,
+          size: _cubit.style.size,
+          backgroundColor: const Color(0xFFFFFFFF),
+        );
+      }
+      return QrImage(
+        data: _cubit.currentQR,
+        size: _cubit.style.size,
+        backgroundColor: const Color(0xFFFFFFFF),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
   }
 }
