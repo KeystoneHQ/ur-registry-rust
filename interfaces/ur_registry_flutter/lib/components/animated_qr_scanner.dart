@@ -18,6 +18,7 @@ class _Cubit extends Cubit<_State> {
   final SuccessCallback onSuccess;
   final FailureCallback onFailed;
   URDecoder urDecoder = URDecoder();
+  bool succeed = false;
 
   _Cubit(this.target, this.onSuccess, this.onFailed) : super(_InitialState());
 
@@ -27,7 +28,10 @@ class _Cubit extends Cubit<_State> {
         urDecoder.receive(code);
         if (urDecoder.isComplete()) {
           final result = urDecoder.resolve(target);
-          onSuccess(result);
+          if(!succeed) {
+            onSuccess(result);
+            succeed = true;
+          }
         }
       }
     } catch (e) {
@@ -38,6 +42,7 @@ class _Cubit extends Cubit<_State> {
 
   void reset() {
     urDecoder = URDecoder();
+    succeed = false;
   }
 }
 
@@ -101,8 +106,9 @@ class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
     // https://github.com/juliuscanute/qr_code_scanner/issues/548
     reassemble();
     try {
-      final Barcode code = await controller.scannedDataStream.first;
-      _cubit.receiveQRCode(code.code);
+      controller.scannedDataStream.listen((event) {
+        _cubit.receiveQRCode(event.code);
+      });
     } catch (e) {
       _cubit.onFailed("Error when receiving UR: $e");
       _cubit.reset();
