@@ -13,14 +13,32 @@ class _InitialState extends _State {}
 typedef SuccessCallback = void Function(NativeObject);
 typedef FailureCallback = void Function(String);
 
+class AnimatedQRScannerStyle {
+  final double overlaySize;
+  final double borderWidth;
+
+  AnimatedQRScannerStyle({
+    required this.overlaySize,
+    required this.borderWidth,
+  });
+
+  const AnimatedQRScannerStyle.factory() : overlaySize = 250, borderWidth = 3;
+}
+
 class _Cubit extends Cubit<_State> {
   late final SupportedType target;
   final SuccessCallback onSuccess;
   final FailureCallback onFailed;
+  final AnimatedQRScannerStyle style;
   URDecoder urDecoder = URDecoder();
   bool succeed = false;
 
-  _Cubit(this.target, this.onSuccess, this.onFailed) : super(_InitialState());
+  _Cubit(
+    this.target,
+    this.onSuccess,
+    this.onFailed, {
+    required this.style,
+  }) : super(_InitialState());
 
   void receiveQRCode(String? code) {
     try {
@@ -28,7 +46,7 @@ class _Cubit extends Cubit<_State> {
         urDecoder.receive(code);
         if (urDecoder.isComplete()) {
           final result = urDecoder.resolve(target);
-          if(!succeed) {
+          if (!succeed) {
             onSuccess(result);
             succeed = true;
           }
@@ -50,17 +68,20 @@ class AnimatedQRScanner extends StatelessWidget {
   final SupportedType target;
   final SuccessCallback onSuccess;
   final FailureCallback onFailed;
+  final AnimatedQRScannerStyle style;
 
-  const AnimatedQRScanner({Key? key,
-    required this.target,
-    required this.onSuccess,
-    required this.onFailed})
+  const AnimatedQRScanner(
+      {Key? key,
+      required this.target,
+      required this.onSuccess,
+      required this.onFailed,
+      this.style = const AnimatedQRScannerStyle.factory()})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => _Cubit(target, onSuccess, onFailed),
+      create: (BuildContext context) => _Cubit(target, onSuccess, onFailed, style: style),
       child: _AnimatedQRScanner(),
     );
   }
@@ -93,10 +114,16 @@ class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
 
   @override
   Widget build(BuildContext context) {
-    return QRView(key: keyQr, onQRViewCreated: onQRViewCreated, overlay: QrScannerOverlayShape(
-      borderColor: const Color(0xFFFF842D),
-      borderWidth: 10,
-    ),);
+    return QRView(
+      key: keyQr,
+      onQRViewCreated: onQRViewCreated,
+      overlay: QrScannerOverlayShape(
+        borderColor: const Color(0xFFFF842D),
+        borderWidth: _cubit.style.borderWidth,
+        borderLength: _cubit.style.overlaySize / 2,
+        cutOutSize: _cubit.style.overlaySize,
+      ),
+    );
   }
 
   Future<void> onQRViewCreated(QRViewController controller) async {
