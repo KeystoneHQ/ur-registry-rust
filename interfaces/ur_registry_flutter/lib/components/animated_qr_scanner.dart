@@ -13,23 +13,11 @@ class _InitialState extends _State {}
 typedef SuccessCallback = void Function(NativeObject);
 typedef FailureCallback = void Function(String);
 
-class AnimatedQRScannerStyle {
-  final double overlaySize;
-  final double borderWidth;
-
-  AnimatedQRScannerStyle({
-    required this.overlaySize,
-    required this.borderWidth,
-  });
-
-  const AnimatedQRScannerStyle.factory() : overlaySize = 250, borderWidth = 3;
-}
-
 class _Cubit extends Cubit<_State> {
   late final SupportedType target;
   final SuccessCallback onSuccess;
   final FailureCallback onFailed;
-  final AnimatedQRScannerStyle style;
+  final QrScannerOverlayShape? overlay;
   URDecoder urDecoder = URDecoder();
   bool succeed = false;
 
@@ -37,7 +25,7 @@ class _Cubit extends Cubit<_State> {
     this.target,
     this.onSuccess,
     this.onFailed, {
-    required this.style,
+    this.overlay,
   }) : super(_InitialState());
 
   void receiveQRCode(String? code) {
@@ -68,20 +56,20 @@ class AnimatedQRScanner extends StatelessWidget {
   final SupportedType target;
   final SuccessCallback onSuccess;
   final FailureCallback onFailed;
-  final AnimatedQRScannerStyle style;
+  final QrScannerOverlayShape? overlay;
 
   const AnimatedQRScanner(
       {Key? key,
       required this.target,
       required this.onSuccess,
       required this.onFailed,
-      this.style = const AnimatedQRScannerStyle.factory()})
+      this.overlay})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => _Cubit(target, onSuccess, onFailed, style: style),
+      create: (BuildContext context) => _Cubit(target, onSuccess, onFailed, overlay: overlay),
       child: _AnimatedQRScanner(),
     );
   }
@@ -117,12 +105,7 @@ class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
     return QRView(
       key: keyQr,
       onQRViewCreated: onQRViewCreated,
-      overlay: QrScannerOverlayShape(
-        borderColor: const Color(0xFFFF842D),
-        borderWidth: _cubit.style.borderWidth,
-        borderLength: _cubit.style.overlaySize / 2,
-        cutOutSize: _cubit.style.overlaySize,
-      ),
+      overlay: _cubit.overlay,
     );
   }
 
