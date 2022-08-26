@@ -16,6 +16,16 @@ pub extern "C" fn crypto_hd_key_get_key_data(crypto_hdkey: &mut CryptoHDKey) -> 
 }
 
 #[no_mangle]
+pub extern "C" fn crypto_hd_key_get_chain_code(crypto_hdkey: &mut CryptoHDKey) -> PtrResponse {
+    match crypto_hdkey.get_chain_code() {
+        Some(chain_code) => {
+            Response::success_string(hex::encode(chain_code))
+        }
+        None => Response::success_null(),
+    }.c_ptr()
+}
+
+#[no_mangle]
 pub extern "C" fn crypto_hd_key_get_name(crypto_hdkey: &mut CryptoHDKey) -> PtrResponse {
     crypto_hdkey
         .get_name()
