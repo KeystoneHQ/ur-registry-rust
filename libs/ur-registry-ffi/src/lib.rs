@@ -5,3 +5,4 @@ mod types;
 mod ur_decoder;
 mod utils;
 mod ur_encoder;
+mod ethereum;

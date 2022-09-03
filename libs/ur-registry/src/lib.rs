@@ -7,5 +7,6 @@ pub mod crypto_hd_key;
 pub mod crypto_key_path;
 pub mod registry_types;
 pub mod solana;
+pub mod ethereum;
 pub mod traits;
 mod types;
