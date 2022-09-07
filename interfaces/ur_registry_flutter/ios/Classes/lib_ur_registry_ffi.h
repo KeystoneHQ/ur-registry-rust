@@ -32,7 +32,9 @@ typedef struct Response *PtrResponse;
 
 PtrResponse crypto_hd_key_get_key_data(void *crypto_hdkey);
 
-PtrResponse crypto_hd_key_get_key_chain_code(void *crypto_hdkey);
+PtrResponse crypto_hd_key_get_uncompressed_key_data(void *compressed_key);
+
+PtrResponse crypto_hd_key_get_chain_code(void *crypto_hdkey);
 
 PtrResponse crypto_hd_key_get_name(void *crypto_hdkey);
 
@@ -80,7 +82,7 @@ PtrResponse eth_sign_request_construct(void *request_id,
                                        void *path,
                                        uint32_t xfp,
                                        void *address,
-                                       void *origin,);
+                                       void *origin);
 
 PtrResponse eth_sign_request_get_ur_encoder(void *eth_sign_request);
 

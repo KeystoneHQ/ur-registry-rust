@@ -73,6 +73,25 @@ PtrResponse solana_signature_get_signature(void *solana_signarure);
 
 PtrResponse solana_signature_get_request_id(void *solana_signature);
 
+PtrResponse eth_sign_request_new(void);
+
+PtrResponse eth_sign_request_construct(void *request_id,
+                                       void *sign_data,
+                                       uint32_t data_type,
+                                       uint32_t chain_id,
+                                       void *path,
+                                       uint32_t xfp,
+                                       void *address,
+                                       void *origin);
+
+PtrResponse eth_sign_request_get_ur_encoder(void *eth_sign_request);
+
+PtrResponse eth_sign_request_get_request_id(void *eth_sign_request);
+
+PtrResponse eth_signature_get_signature(void *eth_signarure);
+
+PtrResponse eth_signature_get_request_id(void *eth_signature);
+
 PtrResponse ur_decoder_new(void);
 
 PtrResponse ur_decoder_receive(void *decoder, void *ur);
