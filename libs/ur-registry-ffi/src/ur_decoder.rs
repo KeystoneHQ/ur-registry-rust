@@ -55,6 +55,8 @@ pub extern "C" fn ur_decoder_resolve(decoder: &mut Decoder, target_type: PtrStri
         "crypto-multi-accounts" => crate::solana::crypto_multi_accounts::resolve(result),
         "crypto-hdkey" => crate::crypto_hd_key::resolve(result),
         "sol-signature" => crate::solana::solana_signarure::resolve(result),
+        "eth-signature" => crate::ethereum::eth_signarure::resolve(result),
+        "eth-sign-request" => crate::ethereum::eth_sign_request::resolve(result),
         t => Response::error(format!("type {} is not supported yet", t)).c_ptr(),
     }
 }
