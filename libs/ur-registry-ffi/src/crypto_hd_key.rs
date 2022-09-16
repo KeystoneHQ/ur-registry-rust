@@ -103,3 +103,11 @@ pub extern "C" fn crypto_hd_key_get_depth(crypto_hdkey: &mut CryptoHDKey) -> Ptr
         .map_or(Response::success_null(), |v| Response::success_uint32(v))
         .c_ptr()
 }
+
+#[no_mangle]
+pub extern "C" fn crypto_hd_key_get_note(crypto_hdkey: &mut CryptoHDKey) -> PtrResponse {
+    crypto_hdkey
+        .get_note()
+        .map_or(Response::success_null(), |v| Response::success_string(v))
+        .c_ptr()
+}

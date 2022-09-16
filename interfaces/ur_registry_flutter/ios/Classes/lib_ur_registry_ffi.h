@@ -46,6 +46,8 @@ PtrResponse crypto_hd_key_get_account_index(void *crypto_hdkey, uint32_t level);
 
 PtrResponse crypto_hd_key_get_depth(void *crypto_hdkey);
 
+PtrResponse crypto_hd_key_get_note(void *crypto_hdkey);
+
 PtrResponse crypto_account_get_accounts_len(void *crypto_account);
 
 PtrResponse crypto_account_get_account(void *crypto_account, uint32_t index);
