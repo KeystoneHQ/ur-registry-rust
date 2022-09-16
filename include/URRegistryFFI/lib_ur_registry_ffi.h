@@ -46,6 +46,14 @@ PtrResponse crypto_hd_key_get_account_index(void *crypto_hdkey, uint32_t level);
 
 PtrResponse crypto_hd_key_get_depth(void *crypto_hdkey);
 
+PtrResponse crypto_account_get_accounts_len(void *crypto_account);
+
+PtrResponse crypto_account_get_account(void *crypto_account, uint32_t index);
+
+PtrResponse crypto_account_get_master_fingerprint(void *crypto_account);
+
+PtrResponse crypto_output_get_hd_key(void *crypto_output);
+
 PtrResponse solana_crypto_multi_accounts_get_master_fingerprint(void *crypto_multi_accounts);
 
 PtrResponse solana_crypto_multi_accounts_get_device(void *crypto_multi_accounts);

@@ -14,6 +14,8 @@ pub const CRYPTO_HDKEY: RegistryType = RegistryType("crypto-hdkey", 303);
 pub const CRYPTO_KEYPATH: RegistryType = RegistryType("crypto-keypath", 304);
 pub const CRYPTO_COIN_INFO: RegistryType = RegistryType("crypto-coin-info", 305);
 pub const CRYPTO_ECKEY: RegistryType = RegistryType("crypto-eckey", 306);
+pub const CRYPTO_OUTPUT: RegistryType = RegistryType("crypto-output", 308);
+pub const CRYPTO_ACCOUNT: RegistryType = RegistryType("crypto-account", 311);
 
 // keystone custom
 pub const ETH_SIGN_REQUEST: RegistryType = RegistryType("eth-sign-request", 401);
