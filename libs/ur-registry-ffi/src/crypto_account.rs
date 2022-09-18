@@ -15,6 +15,7 @@ pub extern "C" fn crypto_account_get_accounts_len(crypto_account: &mut CryptoAcc
     Response::success_uint32(crypto_account.get_output_descriptors().len() as u32).c_ptr()
 }
 
+#[no_mangle]
 pub extern "C" fn crypto_account_get_account(crypto_account: &mut CryptoAccount, index: u32) -> PtrResponse {
     match crypto_account.get_output_descriptors().get(index as usize) {
         Some(crypto_output) => {
