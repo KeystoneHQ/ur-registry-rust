@@ -33,7 +33,7 @@ Android:
 
 iOS:
 > 
-> rustup target add aarch64-apple-ios
+> rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
 
 4. Config
 
