@@ -33,6 +33,15 @@ generate_ios:
 	cargo lipo --release
 	cp ./target/universal/release/libur_registry_ffi.a ./interfaces/ur_registry_flutter/ios/
 
+generate_xcframework:
+	@echo "Step: Generate XCFramework"
+	cargo build -r --target aarch64-apple-ios
+	cargo build -r --target x86_64-apple-ios
+	cargo build -r --target aarch64-apple-ios-sim
+	mkdir -p target/sim
+	lipo target/aarch64-apple-ios-sim/release/libur_registry_ffi.a target/x86_64-apple-ios/release/libur_registry_ffi.a -create -output target/sim/libur_registry_ffi.a
+	xcodebuild -create-xcframework -library target/sim/libur_registry_ffi.a -headers include -library target/aarch64-apple-ios/release/libur_registry_ffi.a -headers include -output target/URRegistryFFI.xcframework
+
 generate_ios_debug:
 	@echo "Step: Generate iOS builds"
 	cargo lipo

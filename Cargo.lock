@@ -33,6 +33,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "cc"
+version = "1.0.73"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2fff2a6927b3bb87f9595d67196a70493f627687a71d87a0d692242c33f58c11"
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -142,6 +148,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "secp256k1"
+version = "0.24.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b7649a0b3ffb32636e60c7ce0d70511eda9c52c658cd0634e194d5a19943aeff"
+dependencies = [
+ "secp256k1-sys",
+]
+
+[[package]]
+name = "secp256k1-sys"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7058dc8eaf3f2810d7828680320acda0b25a288f6d288e19278e249bbf74226b"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "serde"
 version = "1.0.137"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -206,6 +230,7 @@ name = "ur-registry-ffi"
 version = "0.1.0"
 dependencies = [
  "hex",
+ "secp256k1",
  "ur",
  "ur-registry",
 ]

@@ -32,6 +32,10 @@ typedef struct Response *PtrResponse;
 
 PtrResponse crypto_hd_key_get_key_data(void *crypto_hdkey);
 
+PtrResponse crypto_hd_key_get_uncompressed_key_data(void *compressed_key);
+
+PtrResponse crypto_hd_key_get_chain_code(void *crypto_hdkey);
+
 PtrResponse crypto_hd_key_get_name(void *crypto_hdkey);
 
 PtrResponse crypto_hd_key_get_path(void *crypto_hdkey);
@@ -41,6 +45,16 @@ PtrResponse crypto_hd_key_get_source_fingerprint(void *crypto_hdkey);
 PtrResponse crypto_hd_key_get_account_index(void *crypto_hdkey, uint32_t level);
 
 PtrResponse crypto_hd_key_get_depth(void *crypto_hdkey);
+
+PtrResponse crypto_hd_key_get_note(void *crypto_hdkey);
+
+PtrResponse crypto_account_get_accounts_len(void *crypto_account);
+
+PtrResponse crypto_account_get_account(void *crypto_account, uint32_t index);
+
+PtrResponse crypto_account_get_master_fingerprint(void *crypto_account);
+
+PtrResponse crypto_output_get_hd_key(void *crypto_output);
 
 PtrResponse solana_crypto_multi_accounts_get_master_fingerprint(void *crypto_multi_accounts);
 
@@ -68,6 +82,25 @@ PtrResponse solana_sign_request_get_request_id(void *sol_sign_request);
 PtrResponse solana_signature_get_signature(void *solana_signarure);
 
 PtrResponse solana_signature_get_request_id(void *solana_signature);
+
+PtrResponse eth_sign_request_new(void);
+
+PtrResponse eth_sign_request_construct(void *request_id,
+                                       void *sign_data,
+                                       uint32_t data_type,
+                                       uint32_t chain_id,
+                                       void *path,
+                                       uint32_t xfp,
+                                       void *address,
+                                       void *origin);
+
+PtrResponse eth_sign_request_get_ur_encoder(void *eth_sign_request);
+
+PtrResponse eth_sign_request_get_request_id(void *eth_sign_request);
+
+PtrResponse eth_signature_get_signature(void *eth_signarure);
+
+PtrResponse eth_signature_get_request_id(void *eth_signature);
 
 PtrResponse ur_decoder_new(void);
 

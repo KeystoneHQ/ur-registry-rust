@@ -116,7 +116,13 @@ impl CryptoKeyPath {
                 Some('\'') => {
                     let mut remove_quote = split.to_string();
                     remove_quote.pop();
-                    Ok(PathComponent { hardened: true, index: Some(remove_quote.parse().unwrap()), wildcard: false })
+                    let index = remove_quote.parse().map_err(|e| format!("Invalid index: {}", remove_quote))?;
+                    Ok(PathComponent { hardened: true, index: Some(index), wildcard: false })
+                }
+                Some(_) => {
+                    let mut num = split.to_string();
+                    let index = num.parse().map_err(|e| format!("Invalid index: {}", num))?;
+                    Ok(PathComponent { hardened: false, index: Some(index), wildcard: false })
                 }
                 _ => {
                     Err(format!("Invalid Path"))
