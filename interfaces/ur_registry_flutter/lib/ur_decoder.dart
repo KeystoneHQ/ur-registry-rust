@@ -4,7 +4,7 @@ import 'package:ur_registry_flutter/base.dart';
 import 'package:ur_registry_flutter/native_object.dart';
 import 'package:ur_registry_flutter/registries/crypto_account.dart';
 import 'package:ur_registry_flutter/registries/crypto_psbt.dart';
-import 'package:ur_registry_flutter/registries/solana/crypto_multi_accounts.dart';
+import 'package:ur_registry_flutter/registries/extend/crypto_multi_accounts.dart';
 import 'package:ur_registry_flutter/registries/solana/sol_signature.dart';
 import 'package:ur_registry_flutter/response.dart';
 

@@ -3,7 +3,7 @@ import 'package:ur_registry_flutter/registries/crypto_hd_key.dart';
 import 'package:ur_registry_flutter/response.dart';
 import '../../native_object.dart';
 
-const nativePrefix = "solana_crypto_multi_accounts";
+const nativePrefix = "extend_crypto_multi_accounts";
 
 typedef NativeGetMasterFingerprint = Pointer<Response> Function(Pointer<Void>);
 typedef NativeGetDevice = Pointer<Response> Function(Pointer<Void>);

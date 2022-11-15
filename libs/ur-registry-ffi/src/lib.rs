@@ -1,6 +1,7 @@
 mod crypto_hd_key;
 mod response;
 mod solana;
+mod extend;
 mod types;
 mod ur_decoder;
 mod utils;

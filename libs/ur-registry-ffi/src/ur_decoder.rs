@@ -52,10 +52,10 @@ pub extern "C" fn ur_decoder_resolve(decoder: &mut Decoder, target_type: PtrStri
     };
     let target = unsafe { CStr::from_ptr(target_type) }.to_str().unwrap();
     match target {
-        "crypto-multi-accounts" => crate::solana::crypto_multi_accounts::resolve(result),
+        "crypto-multi-accounts" => crate::extend::crypto_multi_accounts::resolve(result),
         "crypto-hdkey" => crate::crypto_hd_key::resolve(result),
         "crypto-account" => crate::crypto_account::resolve(result),
-        "crypto-psbt" => crate::crypto_psbt::resolve(result),
+        "crypto-psbt" => crate::crypto_psbt::resolve(result)
         "sol-signature" => crate::solana::solana_signarure::resolve(result),
         "eth-signature" => crate::ethereum::eth_signarure::resolve(result),
         "eth-sign-request" => crate::ethereum::eth_sign_request::resolve(result),
