@@ -1,11 +1,9 @@
 use crate::response::{PtrResponse, Response};
 use crate::types::{PtrString, PtrVoid};
 use crate::utils::{convert_ptr_string_to_string, parse_ptr_string_to_bytes};
-use hex::FromHex;
-use std::ffi::CStr;
 use ur_registry::crypto_key_path::CryptoKeyPath;
 use ur_registry::ethereum::eth_sign_request::{DataType, EthSignRequest};
-use ur_registry::traits::{From, To, UR};
+use ur_registry::traits::{From, UR};
 
 pub fn resolve(data: Vec<u8>) -> PtrResponse {
     match EthSignRequest::from_bytes(data) {
