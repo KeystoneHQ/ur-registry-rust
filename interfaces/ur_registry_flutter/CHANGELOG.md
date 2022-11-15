@@ -1,3 +1,2 @@
-## 0.0.1-dev.0
-
-* TODO: Describe initial release.
+## 0.1.0
+Add Bitcoin and Ethereum related UR types support.
