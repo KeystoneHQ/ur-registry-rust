@@ -1,6 +1,6 @@
 use crate::cbor_value::CborValue;
 use crate::crypto_key_path::CryptoKeyPath;
-use crate::registry_types::{RegistryType, CRYPTO_KEYPATH, SOL_SIGN_REQUEST, UUID, ETH_SIGN_REQUEST};
+use crate::registry_types::{RegistryType, CRYPTO_KEYPATH, UUID, ETH_SIGN_REQUEST};
 use crate::traits::{From, RegistryItem, To};
 use crate::types::Bytes;
 use serde_cbor::{from_slice, to_vec, Value};

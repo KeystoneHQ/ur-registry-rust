@@ -36,10 +36,10 @@ typedef NativeGetRequestId = Pointer<Response> Function(Pointer<Void>);
 typedef NativeNew = Pointer<Response> Function();
 
 class EthSignRequest extends NativeObject {
-  int transaction = 1;
-  int typedData = 2;
-  int personalMessage = 3;
-  int typedTransaction = 4;
+  static int transaction = 1;
+  static int typedData = 2;
+  static int personalMessage = 3;
+  static int typedTransaction = 4;
   late Construct nativeConstruct = lib
       .lookup<NativeFunction<NativeConstruct>>("${nativePrefix}_construct")
       .asFunction<Construct>();
