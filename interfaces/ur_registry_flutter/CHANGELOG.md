@@ -1,2 +1,5 @@
+
+## 0.1.1
+- Support get `bip32 extended public key` and `chain code` from CryptoHDKey.
 ## 0.1.0
 Add Bitcoin and Ethereum related UR types support.
