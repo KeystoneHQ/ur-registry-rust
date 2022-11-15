@@ -29,7 +29,7 @@ pub extern "C" fn crypto_psbt_construct(data: PtrString) -> PtrResponse {
 }
 
 #[no_mangle]
-pub extern "C" fn solana_sign_request_get_ur_encoder(crypto_psbt: &mut CryptoPSBT) -> PtrResponse {
+pub extern "C" fn crypto_psbt_get_ur_encoder(crypto_psbt: &mut CryptoPSBT) -> PtrResponse {
     let ur_encoder = crypto_psbt.to_ur_encoder(400);
     Response::success_object(Box::into_raw(Box::new(ur_encoder)) as PtrVoid).c_ptr()
 }
