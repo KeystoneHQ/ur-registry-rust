@@ -8,3 +8,4 @@ mod ur_encoder;
 mod ethereum;
 mod crypto_output;
 mod crypto_account;
+mod crypto_psbt;

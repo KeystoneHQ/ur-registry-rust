@@ -2,6 +2,8 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:ur_registry_flutter/base.dart';
 import 'package:ur_registry_flutter/native_object.dart';
+import 'package:ur_registry_flutter/registries/crypto_account.dart';
+import 'package:ur_registry_flutter/registries/crypto_psbt.dart';
 import 'package:ur_registry_flutter/registries/solana/crypto_multi_accounts.dart';
 import 'package:ur_registry_flutter/registries/solana/sol_signature.dart';
 import 'package:ur_registry_flutter/response.dart';
@@ -19,6 +21,8 @@ typedef NativeResolve = Pointer<Response> Function(
     Pointer<Void>, Pointer<Utf8>);
 
 enum SupportedType {
+  cryptoAccount,
+  cryptoPSBT,
   cryptoMultiAccounts,
   solSignRequest,
   solSignature,
@@ -27,6 +31,8 @@ enum SupportedType {
 const _cryptoMultiAccounts = 'crypto-multi-accounts';
 const _solSignRequest = 'sol-sign-request';
 const _solSignature = 'sol-signature';
+const _cryptoAccount = 'crypto-account';
+const _cryptoPSBT = 'crypto-psbt';
 
 class URDecoder extends Base {
   late NativeNew nativeNew =
@@ -68,16 +74,27 @@ class URDecoder extends Base {
 
   NativeObject resolve(SupportedType type) {
     switch (type) {
+      case SupportedType.cryptoAccount:
+        final response =
+            nativeResolve(decoder, _cryptoAccount.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
+      case SupportedType.cryptoPSBT:
+        final response = nativeResolve(decoder, _cryptoPSBT.toNativeUtf8()).ref;
+        return CryptoPSBT(response.getObject());
       case SupportedType.cryptoMultiAccounts:
-        final response = nativeResolve(decoder, _cryptoMultiAccounts.toNativeUtf8()).ref;
+        final response =
+            nativeResolve(decoder, _cryptoMultiAccounts.toNativeUtf8()).ref;
         return CryptoMultiAccounts(response.getObject());
       case SupportedType.solSignRequest:
-        final response = nativeResolve(decoder, _solSignRequest.toNativeUtf8()).ref;
+        final response =
+            nativeResolve(decoder, _solSignRequest.toNativeUtf8()).ref;
         return SolSignRequest(response.getObject());
       case SupportedType.solSignature:
-        final response = nativeResolve(decoder, _solSignature.toNativeUtf8()).ref;
+        final response =
+            nativeResolve(decoder, _solSignature.toNativeUtf8()).ref;
         return SolSignature(response.getObject());
-      default: throw Exception("type $type is not supported");
+      default:
+        throw Exception("type $type is not supported");
     }
   }
 }
