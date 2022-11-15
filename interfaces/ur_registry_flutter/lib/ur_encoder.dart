@@ -1,22 +1,24 @@
 import 'dart:ffi';
 
-import 'package:ur_registry_flutter/base.dart';
+import 'package:ur_registry_flutter/native_object.dart';
 import 'package:ur_registry_flutter/response.dart';
 
 typedef NativeNextPart = Pointer<Response> Function(Pointer<Void>);
 
 const nativePrefix = "ur_encoder";
 
-class UREncoder extends Base {
-  late NativeNextPart nativeNextPart = lib.lookup<NativeFunction<NativeNextPart>>("${nativePrefix}_next_part").asFunction();
-  late Pointer<Void> encoder;
+class UREncoder extends NativeObject {
+  late NativeNextPart nativeNextPart = lib
+      .lookup<NativeFunction<NativeNextPart>>("${nativePrefix}_next_part")
+      .asFunction();
 
-  UREncoder(this.encoder);
+  UREncoder(Pointer<Void> object) : super() {
+    nativeObject = object;
+  }
 
   String nextPart() {
-    final response = nativeNextPart(encoder).ref;
-    response.throwIfPresent();
-    final resultStr = response.data.getString().toUpperCase();
+    final response = nativeNextPart(nativeObject).ref;
+    final resultStr = response.getString().toUpperCase();
     return resultStr;
   }
 }

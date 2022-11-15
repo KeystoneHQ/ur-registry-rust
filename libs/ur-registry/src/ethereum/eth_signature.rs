@@ -1,5 +1,5 @@
 use crate::cbor_value::CborValue;
-use crate::registry_types::{ETH_SIGNATURE, RegistryType, SOL_SIGNATURE, UUID};
+use crate::registry_types::{ETH_SIGNATURE, RegistryType, UUID};
 use crate::traits::{From, RegistryItem, To};
 use crate::types::{Bytes, CborMap};
 use serde_cbor::{from_slice, to_vec, Value};

@@ -55,6 +55,10 @@ void onScanSuccess(NativeObject object) {
   final SolSignRequest solSignRequest = object as SolSignRequest;
   //...
 }
+
+void onScanFailed(String reason) {
+  
+}
 ```
 
 ## Build

@@ -21,8 +21,8 @@ typedef NativeNew = Pointer<Response> Function();
 
 
 class SolSignRequest extends NativeObject {
-  int transaction = 1;
-  int message = 2;
+  static int transaction = 1;
+  static int message = 2;
   late Construct nativeConstruct = lib
       .lookup<NativeFunction<NativeConstruct>>("${nativePrefix}_construct")
       .asFunction<Construct>();

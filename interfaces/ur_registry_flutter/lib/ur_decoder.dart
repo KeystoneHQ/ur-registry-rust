@@ -1,6 +1,5 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
-import 'package:ur_registry_flutter/base.dart';
 import 'package:ur_registry_flutter/native_object.dart';
 import 'package:ur_registry_flutter/registries/crypto_account.dart';
 import 'package:ur_registry_flutter/registries/crypto_hd_key.dart';
@@ -43,7 +42,7 @@ const _solSignature = 'sol-signature';
 const _ethSignRequest = 'eth-sign-request';
 const _ethSignature = 'eth-signature';
 
-class URDecoder extends Base {
+class URDecoder extends NativeObject {
   late NativeNew nativeNew =
       lib.lookup<NativeFunction<NativeNew>>("${nativePrefix}_new").asFunction();
   late NativeReceive nativeReceive = lib
@@ -61,9 +60,13 @@ class URDecoder extends Base {
 
   late Pointer<Void> decoder;
 
-  URDecoder() {
+  URDecoder() : super() {
+    URDecoder._internal();
+  }
+
+  URDecoder._internal() : super() {
     final response = nativeNew().ref;
-    decoder = response.getObject();
+    nativeObject = response.getObject();
   }
 
   void receive(String ur) {

@@ -6,12 +6,15 @@ import '../response.dart';
 const nativePrefix = "crypto_hd_key";
 
 typedef NativeGetKeyData = Pointer<Response> Function(Pointer<Void>);
-typedef NativeGetAccountIndex = Pointer<Response> Function(Pointer<Void>, Uint32);
+typedef NativeGetAccountIndex = Pointer<Response> Function(
+    Pointer<Void>, Uint32);
 typedef FNGetAccountIndex = Pointer<Response> Function(Pointer<Void>, int);
 typedef NativeGetSourceFingerprint = Pointer<Response> Function(Pointer<Void>);
 typedef NativeGetName = Pointer<Response> Function(Pointer<Void>);
 typedef NativeGetPath = Pointer<Response> Function(Pointer<Void>);
 typedef NativeGetDepth = Pointer<Response> Function(Pointer<Void>);
+typedef NativeGetChainCode = Pointer<Response> Function(Pointer<Void>);
+typedef NativeGetBip32Xpub = Pointer<Response> Function(Pointer<Void>);
 
 class CryptoHDKey extends NativeObject {
   CryptoHDKey(Pointer<Void> object) : super() {
@@ -37,6 +40,15 @@ class CryptoHDKey extends NativeObject {
       .asFunction();
   late NativeGetDepth nativeGetDepth = lib
       .lookup<NativeFunction<NativeGetDepth>>("${nativePrefix}_get_depth")
+      .asFunction();
+  late NativeGetChainCode nativeGetChainCode = lib
+      .lookup<NativeFunction<NativeGetChainCode>>(
+          "${nativePrefix}_get_chain_code")
+      .asFunction();
+
+  late NativeGetBip32Xpub nativeGetBip32Xpub = lib
+      .lookup<NativeFunction<NativeGetBip32Xpub>>(
+          "${nativePrefix}_get_bip32_xpub")
       .asFunction();
 
   String getKeyData() {
@@ -67,5 +79,13 @@ class CryptoHDKey extends NativeObject {
   int getDepth() {
     final response = nativeGetDepth(nativeObject).ref;
     return response.getUint32();
+  }
+
+  String getChainCode() {
+    return nativeGetChainCode(nativeObject).ref.getString();
+  }
+
+  String getBip32Xpub() {
+    return nativeGetBip32Xpub(nativeObject).ref.getString();
   }
 }

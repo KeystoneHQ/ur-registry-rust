@@ -1,7 +1,8 @@
 import 'dart:ffi';
 
-import 'base.dart';
+import 'package:ur_registry_flutter/ur_registry_flutter.dart';
 
-class NativeObject extends Base {
+class NativeObject {
+  DynamicLibrary lib = UrRegistryFlutter.load();
   late Pointer<Void> nativeObject;
 }

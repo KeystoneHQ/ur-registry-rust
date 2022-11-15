@@ -2,9 +2,9 @@ use std::collections::BTreeMap;
 use serde_cbor::{from_slice, to_vec, Value};
 use crate::cbor_value::CborValue;
 use crate::crypto_output::CryptoOutput;
-use crate::registry_types::{CRYPTO_ACCOUNT, CRYPTO_HDKEY, RegistryType};
+use crate::registry_types::{CRYPTO_ACCOUNT, RegistryType};
 use crate::traits::{RegistryItem, To, From};
-use crate::types::{Bytes, Fingerprint};
+use crate::types::{Fingerprint};
 
 const MASTER_FINGERPRINT: i128 = 1;
 const OUTPUT_DESCRIPTORS: i128 = 2;

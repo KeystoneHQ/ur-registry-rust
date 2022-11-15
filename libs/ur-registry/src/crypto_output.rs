@@ -1,7 +1,7 @@
 use serde_cbor::{from_slice, to_vec, Value};
 use crate::cbor_value::CborValue;
 use crate::crypto_hd_key::CryptoHDKey;
-use crate::registry_types::{CRYPTO_HDKEY, CRYPTO_OUTPUT, RegistryType};
+use crate::registry_types::{CRYPTO_OUTPUT, RegistryType};
 use crate::traits::{RegistryItem, To, From};
 
 #[derive(Clone, Debug, Default)]

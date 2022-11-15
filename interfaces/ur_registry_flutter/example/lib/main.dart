@@ -17,7 +17,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _urRegistryFlutterPlugin = UrRegistryFlutter();
 
   @override
   void initState() {
@@ -32,7 +31,7 @@ class _MyAppState extends State<MyApp> {
     // We also handle the message potentially returning null.
     try {
       platformVersion =
-          await _urRegistryFlutterPlugin.getPlatformVersion() ?? 'Unknown platform version';
+          await UrRegistryFlutter.platformVersion ?? 'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
