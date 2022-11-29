@@ -9,11 +9,7 @@ edition = "2021"
 hex = "0.4.3"
 secp256k1 = "0.24.0"
 ur-registry = { path = "../ur-registry" }
-
-[dependencies.ur]
-git = "https://github.com/KeystoneHQ/ur-rs.git"
-rev = "5f673a1"
-version = "0.2.0"
+ur = { workspace = true }
 
 [lib]
 name = "ur_registry_ffi"

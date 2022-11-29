@@ -2,3 +2,8 @@
 members = [
     "libs/*"
 ]
+
+[workspace.dependencies.ur]
+git = "https://github.com/KeystoneHQ/ur-rs.git"
+rev = "5f673a1"
+version = "0.2.0"
