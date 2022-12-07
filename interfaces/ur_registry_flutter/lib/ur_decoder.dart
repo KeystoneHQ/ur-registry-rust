@@ -58,8 +58,6 @@ class URDecoder extends NativeObject {
       .lookup<NativeFunction<NativeResolve>>("${nativePrefix}_resolve")
       .asFunction();
 
-  late Pointer<Void> decoder;
-
   URDecoder() : super() {
     URDecoder._internal();
   }
@@ -70,17 +68,17 @@ class URDecoder extends NativeObject {
   }
 
   void receive(String ur) {
-    final response = nativeReceive(decoder, ur.toNativeUtf8()).ref;
+    final response = nativeReceive(nativeObject, ur.toNativeUtf8()).ref;
     response.throwIfPresent();
   }
 
   bool isComplete() {
-    final response = nativeIsComplete(decoder).ref;
+    final response = nativeIsComplete(nativeObject).ref;
     return response.getBoolean();
   }
 
   String result() {
-    final response = nativeResult(decoder).ref;
+    final response = nativeResult(nativeObject).ref;
     return response.getString();
   }
 
@@ -88,34 +86,34 @@ class URDecoder extends NativeObject {
     switch (type) {
       case SupportedType.cryptoHDKey:
         final response =
-            nativeResolve(decoder, _cryptoHDKey.toNativeUtf8()).ref;
+            nativeResolve(nativeObject, _cryptoHDKey.toNativeUtf8()).ref;
         return CryptoHDKey(response.getObject());
       case SupportedType.cryptoAccount:
         final response =
-            nativeResolve(decoder, _cryptoAccount.toNativeUtf8()).ref;
+            nativeResolve(nativeObject, _cryptoAccount.toNativeUtf8()).ref;
         return CryptoAccount(response.getObject());
       case SupportedType.cryptoPSBT:
-        final response = nativeResolve(decoder, _cryptoPSBT.toNativeUtf8()).ref;
+        final response = nativeResolve(nativeObject, _cryptoPSBT.toNativeUtf8()).ref;
         return CryptoPSBT(response.getObject());
       case SupportedType.cryptoMultiAccounts:
         final response =
-            nativeResolve(decoder, _cryptoMultiAccounts.toNativeUtf8()).ref;
+            nativeResolve(nativeObject, _cryptoMultiAccounts.toNativeUtf8()).ref;
         return CryptoMultiAccounts(response.getObject());
       case SupportedType.solSignRequest:
         final response =
-            nativeResolve(decoder, _solSignRequest.toNativeUtf8()).ref;
+            nativeResolve(nativeObject, _solSignRequest.toNativeUtf8()).ref;
         return SolSignRequest(response.getObject());
       case SupportedType.solSignature:
         final response =
-            nativeResolve(decoder, _solSignature.toNativeUtf8()).ref;
+            nativeResolve(nativeObject, _solSignature.toNativeUtf8()).ref;
         return SolSignature(response.getObject());
       case SupportedType.ethSignRequest:
         final response =
-            nativeResolve(decoder, _ethSignRequest.toNativeUtf8()).ref;
+            nativeResolve(nativeObject, _ethSignRequest.toNativeUtf8()).ref;
         return EthSignRequest(response.getObject());
       case SupportedType.ethSignature:
         final response =
-            nativeResolve(decoder, _ethSignature.toNativeUtf8()).ref;
+            nativeResolve(nativeObject, _ethSignature.toNativeUtf8()).ref;
         return EthSignature(response.getObject());
       default:
         throw Exception("type $type is not supported");
