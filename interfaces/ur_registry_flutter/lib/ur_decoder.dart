@@ -59,10 +59,6 @@ class URDecoder extends NativeObject {
       .asFunction();
 
   URDecoder() : super() {
-    URDecoder._internal();
-  }
-
-  URDecoder._internal() : super() {
     final response = nativeNew().ref;
     nativeObject = response.getObject();
   }
