@@ -1,3 +1,5 @@
+## 0.1.4
+- Fix bug.
 ## 0.1.3
 - Fix error: decoder has not been initialized.
 ## 0.1.1
