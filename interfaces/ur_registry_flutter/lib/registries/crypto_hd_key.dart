@@ -95,8 +95,12 @@ class CryptoHDKey extends NativeObject {
     return response.getUint32();
   }
 
-  String getChainCode() {
-    return nativeGetChainCode(nativeObject).ref.getString();
+  String? getChainCode() {
+    try {
+      return nativeGetChainCode(nativeObject).ref.getString();
+    } catch (e) {
+      return null;
+    }
   }
 
   String getBip32Xpub() {
