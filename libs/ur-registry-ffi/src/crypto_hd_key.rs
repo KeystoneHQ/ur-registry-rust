@@ -53,7 +53,7 @@ pub extern "C" fn crypto_hd_key_get_chain_code(crypto_hdkey: &mut CryptoHDKey) -
         Some(chain_code) => Response::success_string(hex::encode(chain_code)),
         None => Response::success_null(),
     }
-    .c_ptr()
+        .c_ptr()
 }
 
 #[no_mangle]
@@ -72,8 +72,18 @@ pub extern "C" fn crypto_hd_key_get_path(crypto_hdkey: &mut CryptoHDKey) -> PtrR
             None => Response::success_null(),
         },
         None => Response::success_null(),
-    }
-    .c_ptr()
+    }.c_ptr()
+}
+
+#[no_mangle]
+pub extern "C" fn crypto_hd_key_get_children_path(crypto_hdkey: &mut CryptoHDKey) -> PtrResponse {
+    match crypto_hdkey.get_children() {
+        Some(v) => match v.get_path() {
+            Some(s) => Response::success_string(s),
+            None => Response::success_null(),
+        },
+        None => Response::success_null(),
+    }.c_ptr()
 }
 
 #[no_mangle]
@@ -87,7 +97,7 @@ pub extern "C" fn crypto_hd_key_get_source_fingerprint(
         },
         None => Response::success_null(),
     }
-    .c_ptr()
+        .c_ptr()
 }
 
 #[no_mangle]
