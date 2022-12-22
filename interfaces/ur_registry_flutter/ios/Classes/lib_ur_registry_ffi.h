@@ -56,14 +56,11 @@ PtrResponse crypto_account_get_master_fingerprint(void *crypto_account);
 
 PtrResponse crypto_output_get_hd_key(void *crypto_output);
 
-PtrResponse solana_crypto_multi_accounts_get_master_fingerprint(void *crypto_multi_accounts);
+PtrResponse crypto_psbt_get_data(void *crypto_psbt);
 
-PtrResponse solana_crypto_multi_accounts_get_device(void *crypto_multi_accounts);
+PtrResponse crypto_psbt_construct(void *data);
 
-PtrResponse solana_crypto_multi_accounts_get_keys_len(void *crypto_multi_accounts);
-
-PtrResponse solana_crypto_multi_accounts_get_key(void *crypto_multi_accounts,
-                                                 uint32_t index);
+PtrResponse crypto_psbt_get_ur_encoder(void *crypto_psbt);
 
 PtrResponse solana_sign_request_new(void);
 
@@ -101,6 +98,14 @@ PtrResponse eth_sign_request_get_request_id(void *eth_sign_request);
 PtrResponse eth_signature_get_signature(void *eth_signarure);
 
 PtrResponse eth_signature_get_request_id(void *eth_signature);
+
+PtrResponse extend_crypto_multi_accounts_get_master_fingerprint(void *crypto_multi_accounts);
+
+PtrResponse extend_crypto_multi_accounts_get_device(void *crypto_multi_accounts);
+
+PtrResponse extend_crypto_multi_accounts_get_keys_len(void *crypto_multi_accounts);
+
+PtrResponse extend_crypto_multi_accounts_get_key(void *crypto_multi_accounts, uint32_t index);
 
 PtrResponse ur_decoder_new(void);
 
