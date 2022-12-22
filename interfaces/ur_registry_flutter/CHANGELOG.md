@@ -1,6 +1,7 @@
+## 0.1.7
+- add iOS headers. 
 ## 0.1.6
 - make `getChainCode` returns optional value;
-
 ## 0.1.5
 - add `getChildrenPath` on `CryptoHDKey`;
 ## 0.1.4
