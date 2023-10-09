@@ -93,13 +93,13 @@ class _AnimatedQRCodeState extends State<_AnimatedQRCode> {
   Widget build(BuildContext context) {
     return BlocBuilder<_Cubit, _State>(builder: (context, state) {
       if(state is _AnimatedQRDataState) {
-        return QrImage(
+        return QrImageView(
           data: state.data,
           size: _cubit.style.size,
           backgroundColor: const Color(0xFFFFFFFF),
         );
       }
-      return QrImage(
+      return QrImageView(
         data: _cubit.currentQR,
         size: _cubit.style.size,
         backgroundColor: const Color(0xFFFFFFFF),
