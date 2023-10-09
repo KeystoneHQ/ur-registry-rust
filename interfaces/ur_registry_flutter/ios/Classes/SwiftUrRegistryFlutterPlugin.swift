@@ -24,10 +24,15 @@ public class SwiftUrRegistryFlutterPlugin: NSObject, FlutterPlugin {
     crypto_hd_key_get_account_index(anyPointer, 1);
     crypto_hd_key_get_depth(anyPointer);
 
-    solana_crypto_multi_accounts_get_master_fingerprint(anyPointer);
-    solana_crypto_multi_accounts_get_keys_len(anyPointer);
-    solana_crypto_multi_accounts_get_device(anyPointer);
-    solana_crypto_multi_accounts_get_key(anyPointer, 1);
+    crypto_account_get_accounts_len(anyPointer);
+    crypto_account_get_account(anyPointer, 1);
+    crypto_account_get_master_fingerprint(anyPointer);
+
+    crypto_output_get_hd_key(anyPointer);
+
+    crypto_psbt_get_data(anyPointer);
+    crypto_psbt_construct(anyPointer);
+    crypto_psbt_get_ur_encoder(anyPointer);
 
     solana_sign_request_new();
     solana_sign_request_construct(anyPointer, anyPointer, anyPointer, 1, anyPointer, anyPointer, 1);
@@ -36,6 +41,19 @@ public class SwiftUrRegistryFlutterPlugin: NSObject, FlutterPlugin {
     solana_signature_get_signature(anyPointer);
     solana_signature_get_request_id(anyPointer);
 
+    eth_sign_request_new();
+    eth_sign_request_construct(anyPointer, anyPointer, 0, 0, anyPointer, 0, anyPointer, anyPointer);
+    eth_sign_request_get_ur_encoder(anyPointer);
+    eth_sign_request_get_request_id(anyPointer);
+
+    eth_signature_get_signature(anyPointer);
+    eth_signature_get_request_id(anyPointer);
+
+    extend_crypto_multi_accounts_get_master_fingerprint(anyPointer);
+    extend_crypto_multi_accounts_get_device(anyPointer);
+    extend_crypto_multi_accounts_get_keys_len(anyPointer);
+    extend_crypto_multi_accounts_get_key(anyPointer, 0);
+
     ur_decoder_new();
     ur_decoder_receive(anyPointer, anyPointer);
     ur_decoder_is_complete(anyPointer);
@@ -43,6 +61,7 @@ public class SwiftUrRegistryFlutterPlugin: NSObject, FlutterPlugin {
     ur_decoder_resolve(anyPointer, anyPointer)
 
     utils_free(anyPointer)
+
     ur_encoder_next_part(anyPointer)
   }
 }
