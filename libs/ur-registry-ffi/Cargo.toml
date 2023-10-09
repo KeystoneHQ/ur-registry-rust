@@ -8,8 +8,8 @@ edition = "2021"
 [dependencies]
 hex = "0.4.3"
 secp256k1 = "0.24.0"
-ur = { path = "../ur-rs" }
 ur-registry = { path = "../ur-registry" }
+ur = { workspace = true }
 
 [lib]
 name = "ur_registry_ffi"
