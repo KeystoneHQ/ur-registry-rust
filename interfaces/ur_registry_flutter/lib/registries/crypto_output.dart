@@ -5,7 +5,7 @@ import 'package:ur_registry_flutter/registries/crypto_hd_key.dart';
 
 import '../response.dart';
 
-const nativePrefix = "crypto_account";
+const nativePrefix = "crypto_output";
 
 typedef NativeGetKey = Pointer<Response> Function(Pointer<Void>);
 
