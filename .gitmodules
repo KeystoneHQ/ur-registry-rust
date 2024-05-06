@@ -1,3 +1,0 @@
-[submodule "libs/ur-rs"]
-	path = libs/ur-rs
-	url = git@github.com:KeystoneHQ/ur-rs.git
