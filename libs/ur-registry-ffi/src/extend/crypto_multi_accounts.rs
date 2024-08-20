@@ -4,7 +4,7 @@ use ur_registry::extend::crypto_multi_accounts::CryptoMultiAccounts;
 use ur_registry::traits::From;
 
 pub fn resolve(data: Vec<u8>) -> PtrResponse {
-    match CryptoMultiAccounts::from_bytes(data) {
+    match CryptoMultiAccounts::try_from(data) {
         Ok(result) => Response::success_object(Box::into_raw(Box::new(result)) as PtrVoid).c_ptr(),
         Err(error) => Response::error(error.to_string()).c_ptr(),
     }
