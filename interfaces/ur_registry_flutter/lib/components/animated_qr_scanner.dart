@@ -30,13 +30,9 @@ class _Cubit extends Cubit<_State> {
 
   void receiveQRCode(String? code) {
     try {
-      print("Received UR0: $code");
       if (code != null) {
-        print("Received UR1: $code");
         urDecoder.receive(code);
-        print("Received UR2: $code");
         if (urDecoder.isComplete()) {
-          print("UR is complete");
           final result = urDecoder.resolve(target);
           if (!succeed) {
             onSuccess(result);
