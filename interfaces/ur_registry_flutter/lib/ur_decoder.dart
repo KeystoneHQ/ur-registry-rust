@@ -27,10 +27,21 @@ enum SupportedType {
   cryptoAccount,
   cryptoPSBT,
   cryptoMultiAccounts,
+  // sol
   solSignRequest,
   solSignature,
+  // eth
   ethSignRequest,
   ethSignature,
+  // cardano
+  cardanoUTXO,
+  cardanoSignRequest,
+  cardanoSignature,
+  cardanoCertKey,
+  cardanoSignDataRequest,
+  cardanoSignDataSignature,
+  cardanoCatalystVotingRegistration,
+  cardanoCatalystVotingRegistrationSignature,
 }
 
 const _cryptoHDKey = 'crypto-hdkey';
@@ -41,6 +52,15 @@ const _solSignRequest = 'sol-sign-request';
 const _solSignature = 'sol-signature';
 const _ethSignRequest = 'eth-sign-request';
 const _ethSignature = 'eth-signature';
+
+const _cardanoUTXO = 'cardano-utxo';
+const _cardanoSignRequest = 'cardano-sign-request';
+const _cardanoSignature = 'cardano-signature';
+const _cardanoCertKey = 'cardano-cert-key';
+const _cardanoSignDataRequest = 'cardano-sign-data-request';
+const _cardanoSignDataSignature = 'cardano-sign-data-signature';
+const _cardanoCatalystVotingRegistration = 'cardano-catalyst-voting-registration';
+const _cardanoCatalystVotingRegistrationSignature = 'cardano-catalyst-voting-registration-signature';
 
 class URDecoder extends NativeObject {
   late NativeNew nativeNew =
@@ -95,6 +115,7 @@ class URDecoder extends NativeObject {
         final response =
             nativeResolve(nativeObject, _cryptoMultiAccounts.toNativeUtf8()).ref;
         return CryptoMultiAccounts(response.getObject());
+      // sol
       case SupportedType.solSignRequest:
         final response =
             nativeResolve(nativeObject, _solSignRequest.toNativeUtf8()).ref;
@@ -103,6 +124,7 @@ class URDecoder extends NativeObject {
         final response =
             nativeResolve(nativeObject, _solSignature.toNativeUtf8()).ref;
         return SolSignature(response.getObject());
+      // eth
       case SupportedType.ethSignRequest:
         final response =
             nativeResolve(nativeObject, _ethSignRequest.toNativeUtf8()).ref;
@@ -111,6 +133,39 @@ class URDecoder extends NativeObject {
         final response =
             nativeResolve(nativeObject, _ethSignature.toNativeUtf8()).ref;
         return EthSignature(response.getObject());
+      // cardano
+      case SupportedType.cardanoUTXO:
+        final response =
+            nativeResolve(nativeObject, _cardanoUTXO.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
+      case SupportedType.cardanoSignRequest:
+        final response =
+            nativeResolve(nativeObject, _cardanoSignRequest.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
+      case SupportedType.cardanoSignature:
+        final response =
+            nativeResolve(nativeObject, _cardanoSignature.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
+      case SupportedType.cardanoCertKey:
+        final response =
+            nativeResolve(nativeObject, _cardanoCertKey.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
+      case SupportedType.cardanoSignDataRequest:
+        final response =
+            nativeResolve(nativeObject, _cardanoSignDataRequest.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
+      case SupportedType.cardanoSignDataSignature:
+        final response =
+            nativeResolve(nativeObject, _cardanoSignDataSignature.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
+      case SupportedType.cardanoCatalystVotingRegistration:
+        final response =
+            nativeResolve(nativeObject, _cardanoCatalystVotingRegistration.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
+      case SupportedType.cardanoCatalystVotingRegistrationSignature:
+        final response =
+            nativeResolve(nativeObject, _cardanoCatalystVotingRegistrationSignature.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
       default:
         throw Exception("type $type is not supported");
     }

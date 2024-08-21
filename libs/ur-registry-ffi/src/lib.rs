@@ -7,6 +7,7 @@ mod ur_decoder;
 mod utils;
 mod ur_encoder;
 mod ethereum;
+mod cardano;
 mod crypto_output;
 mod crypto_account;
 mod crypto_psbt;

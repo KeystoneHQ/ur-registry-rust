@@ -16,7 +16,7 @@ pub extern "C" fn ur_decoder_receive(decoder: &mut Decoder, ur: PtrString) -> Pt
         Err(error) => return Response::error(error.to_string()).c_ptr(),
     };
     match decoder.receive(ur_str.as_str()) {
-        Err(error) => Response::error(error.to_string()).c_ptr(),
+        Err(error) => Response::error(format!("No data received before get result")).c_ptr(),
         _ => Response::success_null().c_ptr(),
     }
 }

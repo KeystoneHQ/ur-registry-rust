@@ -12,6 +12,12 @@ pub struct Response {
     pub value: Value,
 }
 
+impl Response {
+    pub fn from_ptr(ptr: PtrResponse) -> Self {
+        unsafe { *Box::from_raw(ptr) }
+    }
+}
+
 #[repr(C)]
 pub union Value {
     _object: PtrVoid,
@@ -38,6 +44,10 @@ impl Value {
     }
     pub fn null() -> Self {
         Value { _null: null_mut() }
+    }
+
+    pub fn get_string(&self) -> String {
+        unsafe { CString::from_raw(self._string).to_str().unwrap().to_string() }
     }
 }
 
