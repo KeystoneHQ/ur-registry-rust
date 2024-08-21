@@ -46,8 +46,8 @@ impl Value {
         Value { _null: null_mut() }
     }
 
-    pub fn get_string(&self) -> String {
-        unsafe { CString::from_raw(self._string).to_str().unwrap().to_string() }
+    pub fn get_object(&self) -> PtrVoid {
+        unsafe { self._object }
     }
 }
 
