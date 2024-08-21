@@ -13,10 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.3
-  qr_code_scanner: # ^1.0.1
-    git: # a few commits ahead of 1.0.1 to add AGP 8 support
-      url: https://github.com/vespr-wallet/qr_code_scanner
-      ref: fcc643a97993e29b70d27716e7b2707a5ea1f599
+  qr_code_scanner_plus: ^2.0.3
   qr_flutter: ^4.1.0
   uuid: ^4.1.0
 
