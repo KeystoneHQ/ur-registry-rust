@@ -61,6 +61,7 @@ pub extern "C" fn ur_decoder_resolve(decoder: &mut Decoder, target_type: PtrStri
         "sol-sign-request" => crate::solana::solana_sign_request::resolve(result),
         "eth-signature" => crate::ethereum::eth_signarure::resolve(result),
         "eth-sign-request" => crate::ethereum::eth_sign_request::resolve(result),
+        "cardano-signature" => crate::cardano::cardano_signature::resolve(result),
         t => Response::error(format!("type {} is not supported yet", t)).c_ptr(),
     }
 }

@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:ur_registry_flutter/native_object.dart';
+import 'package:ur_registry_flutter/registries/cardano/cardano_signature.dart';
 import 'package:ur_registry_flutter/registries/crypto_account.dart';
 import 'package:ur_registry_flutter/registries/crypto_hd_key.dart';
 import 'package:ur_registry_flutter/registries/crypto_psbt.dart';
@@ -145,7 +146,7 @@ class URDecoder extends NativeObject {
       case SupportedType.cardanoSignature:
         final response =
             nativeResolve(nativeObject, _cardanoSignature.toNativeUtf8()).ref;
-        return CryptoAccount(response.getObject());
+        return CardanoSignature(response.getObject());
       case SupportedType.cardanoCertKey:
         final response =
             nativeResolve(nativeObject, _cardanoCertKey.toNativeUtf8()).ref;
