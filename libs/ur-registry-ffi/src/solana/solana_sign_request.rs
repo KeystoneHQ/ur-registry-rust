@@ -4,7 +4,7 @@ use crate::utils::{convert_ptr_string_to_string, parse_ptr_string_to_bytes};
 
 use ur_registry::crypto_key_path::CryptoKeyPath;
 use ur_registry::solana::sol_sign_request::{SignType, SolSignRequest};
-use ur_registry::traits::{From, UR};
+use ur_registry::traits::{To, RegistryItem};
 
 pub fn resolve(data: Vec<u8>) -> PtrResponse {
     match SolSignRequest::try_from(data) {
@@ -70,7 +70,13 @@ pub extern "C" fn solana_sign_request_construct(
 
 #[no_mangle]
 pub extern "C" fn solana_sign_request_get_ur_encoder(sol_sign_request: &mut SolSignRequest) -> PtrResponse {
-    let ur_encoder = sol_sign_request.to_ur_encoder(400);
+    let message = sol_sign_request.to_bytes().unwrap();
+    let ur_encoder = ur::Encoder::new(
+        message.as_slice(),
+        400,
+        SolSignRequest::get_registry_type().get_type(),
+    )
+    .unwrap();
     Response::success_object(Box::into_raw(Box::new(ur_encoder)) as PtrVoid).c_ptr()
 }
 

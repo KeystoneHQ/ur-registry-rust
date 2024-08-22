@@ -2,12 +2,12 @@ use crate::response::{PtrResponse, Response};
 use serde::Deserialize;
 use serde_json::json;
 use crate::types::{PtrString, PtrVoid};
-use crate::utils::{convert_ptr_string_to_string, parse_ptr_string_to_bytes};
+use crate::utils::convert_ptr_string_to_string;
 use ur_registry::crypto_key_path::CryptoKeyPath;
 use ur_registry::cardano::cardano_sign_request::CardanoSignRequest;
 use ur_registry::cardano::cardano_cert_key::CardanoCertKey;
 use ur_registry::cardano::cardano_utxo::CardanoUTXO;
-use ur_registry::traits::UR;
+use ur_registry::traits::{RegistryItem, To};
 use uuid::Uuid;
 
 #[derive(Deserialize)]
@@ -166,7 +166,13 @@ pub extern "C" fn cardano_sign_request_construct(
 
 #[no_mangle]
 pub extern "C" fn cardano_sign_request_get_ur_encoder(cardano_sign_request: &mut CardanoSignRequest) -> PtrResponse {
-    let ur_encoder = cardano_sign_request.to_ur_encoder(400);
+    let message = cardano_sign_request.to_bytes().unwrap();
+    let ur_encoder = ur::Encoder::new(
+        message.as_slice(),
+        400,
+        CardanoSignRequest::get_registry_type().get_type(),
+    )
+    .unwrap();
     Response::success_object(Box::into_raw(Box::new(ur_encoder)) as PtrVoid).c_ptr()
 }
 
