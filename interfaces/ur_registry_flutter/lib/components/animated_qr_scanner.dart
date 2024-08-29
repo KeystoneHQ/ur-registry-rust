@@ -17,6 +17,7 @@ class _Cubit extends Cubit<_State> {
   late final SupportedType target;
   final SuccessCallback onSuccess;
   final FailureCallback onFailed;
+  // final OnProcessed? onProcessed;
   final QrScannerOverlayShape? overlay;
   URDecoder urDecoder = URDecoder();
   bool succeed = false;

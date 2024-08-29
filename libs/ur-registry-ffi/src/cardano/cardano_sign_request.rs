@@ -169,7 +169,7 @@ pub extern "C" fn cardano_sign_request_get_ur_encoder(cardano_sign_request: &mut
     let message = cardano_sign_request.to_bytes().unwrap();
     let ur_encoder = ur::Encoder::new(
         message.as_slice(),
-        400,
+        200,
         CardanoSignRequest::get_registry_type().get_type(),
     )
     .unwrap();
@@ -193,23 +193,55 @@ mod tests {
     let request_id = "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d";
     let sign_data = "84a400828258204e3a6e7fdcb0d0efa17bf79c13aed2b4cb9baf37fb1aa2e39553d5bd720c5c99038258204e3a6e7fdcb0d0efa17bf79c13aed2b4cb9baf37fb1aa2e39553d5bd720c5c99040182a200581d6179df4c75f7616d7d1fd39cbc1a6ea6b40a0d7b89fea62fc0909b6c370119c350a200581d61c9b0c9761fd1dc0404abd55efc895026628b5035ac623c614fbad0310119c35002198ecb0300a0f5f6";
     let utxos = r#"[
-            {
-                "transaction_hash": "4e3a6e7fdcb0d0efa17bf79c13aed2b4cb9baf37fb1aa2e39553d5bd720c5c99",
-                "index": 3,
-                "amount": "10000000",
-                "xfp": "73c5da0a",
-                "hd_path": "m/1852'/1815'/0'/0/0",
-                "address": "addr1qy8ac7qqy0vtulyl7wntmsxc6wex80gvcyjy33qffrhm7sh927ysx5sftuw0dlft05dz3c7revpf7jx0xnlcjz3g69mq4afdhv"
-            },
-            {
-                "transaction_hash": "4e3a6e7fdcb0d0efa17bf79c13aed2b4cb9baf37fb1aa2e39553d5bd720c5c99",
-                "index": 4,
-                "amount": "18020000",
-                "xfp": "73c5da0a",
-                "hd_path": "m/1852'/1815'/0'/0/1",
-                "address": "addr1qyz85693g4fr8c55mfyxhae8j2u04pydxrgqr73vmwpx3azv4dgkyrgylj5yl2m0jlpdpeswyyzjs0vhwvnl6xg9f7ssrxkz90"
-            }
-        ]"#;
+{
+"transaction_hash": "b3503a1431e0003fe04be4db4b246d3ab1cd806a92974dd007989fc7e0addfee",
+"index": 0,
+"amount": "978370",
+"address": "addr1qy54fxzs2drspa29g5ucph28rt8p5vwk0skesuzjaxvxtw6wmla0xwrh6ef2awh60pdevu3p8lt3g9k0emwsgvzrzlkqf0c2gs",
+"hd_path": "m/1852'/1815'/0'/0/0",
+"xfp": "1250b6bc"
+},
+{
+"transaction_hash": "3078c4df7f3f9da1ca992a65d596168658947cefae989c12d2f91a6e9efb8196",
+"index": 0,
+"amount": "1062414",
+"address": "addr1qy54fxzs2drspa29g5ucph28rt8p5vwk0skesuzjaxvxtw6wmla0xwrh6ef2awh60pdevu3p8lt3g9k0emwsgvzrzlkqf0c2gs",
+"hd_path": "m/1852'/1815'/0'/0/0",
+"xfp": "1250b6bc"
+},
+{
+"transaction_hash": "ea31490a38609c70c608b74ebc446aa50ab9058095bf718c1faac0f067c6c908",
+"index": 1,
+"amount": "3485694",
+"address": "addr1qy54fxzs2drspa29g5ucph28rt8p5vwk0skesuzjaxvxtw6wmla0xwrh6ef2awh60pdevu3p8lt3g9k0emwsgvzrzlkqf0c2gs",
+"hd_path": "m/1852'/1815'/0'/0/0",
+"xfp": "1250b6bc"
+},
+{
+"transaction_hash": "20b2780253c779c3e17d6493110dfde5747b23d8782afd0aa387914ef735744f",
+"index": 0,
+"amount": "1000000",
+"address": "addr1qy54fxzs2drspa29g5ucph28rt8p5vwk0skesuzjaxvxtw6wmla0xwrh6ef2awh60pdevu3p8lt3g9k0emwsgvzrzlkqf0c2gs",
+"hd_path": "m/1852'/1815'/0'/0/0",
+"xfp": "1250b6bc"
+},
+{
+"transaction_hash": "a91b7542e0a0ecdfefcf3594aaba87fb3988c552ee7e46218847658a36484819",
+"index": 1,
+"amount": "2170178",
+"address": "addr1qy54fxzs2drspa29g5ucph28rt8p5vwk0skesuzjaxvxtw6wmla0xwrh6ef2awh60pdevu3p8lt3g9k0emwsgvzrzlkqf0c2gs",
+"hd_path": "m/1852'/1815'/0'/0/0",
+"xfp": "1250b6bc"
+},
+{
+"transaction_hash": "7845c02d53251a2bb4892dfa4214c05fcf39d7a7fd7dbd6e7c3f818ede9349ef",
+"index": 2,
+"amount": "74275000",
+"address": "addr1qy54fxzs2drspa29g5ucph28rt8p5vwk0skesuzjaxvxtw6wmla0xwrh6ef2awh60pdevu3p8lt3g9k0emwsgvzrzlkqf0c2gs",
+"hd_path": "m/1852'/1815'/0'/0/0",
+"xfp": "1250b6bc"
+}
+]"#;
     let cert_keys = r#"[
             {
                 "key_hash": "e557890352095f1cf6fd2b7d1a28e3c3cb029f48cf34ff890a28d176",
