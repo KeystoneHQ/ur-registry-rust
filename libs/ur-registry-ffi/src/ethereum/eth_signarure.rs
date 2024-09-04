@@ -4,7 +4,7 @@ use crate::response::{PtrResponse, Response};
 use crate::types::PtrVoid;
 
 pub fn resolve(data: Vec<u8>) -> PtrResponse {
-    match EthSignature::from_bytes(data) {
+    match EthSignature::try_from(data) {
         Ok(result) => Response::success_object(Box::into_raw(Box::new(result)) as PtrVoid).c_ptr(),
         Err(error) => Response::error(error.to_string()).c_ptr(),
     }

@@ -1,4 +1,4 @@
-use ur_registry::{crypto_psbt::CryptoPSBT, traits::{From, UR}};
+use ur_registry::{crypto_psbt::CryptoPSBT, traits::{To, RegistryItem}};
 
 use crate::{
     response::{PtrResponse, Response},
@@ -7,7 +7,7 @@ use crate::{
 };
 
 pub fn resolve(data: Vec<u8>) -> PtrResponse {
-    match ur_registry::crypto_psbt::CryptoPSBT::from_bytes(data) {
+    match ur_registry::crypto_psbt::CryptoPSBT::try_from(data) {
         Ok(result) => Response::success_object(Box::into_raw(Box::new(result)) as PtrVoid).c_ptr(),
         Err(error) => Response::error(error.to_string()).c_ptr(),
     }
@@ -30,6 +30,12 @@ pub extern "C" fn crypto_psbt_construct(data: PtrString) -> PtrResponse {
 
 #[no_mangle]
 pub extern "C" fn crypto_psbt_get_ur_encoder(crypto_psbt: &mut CryptoPSBT) -> PtrResponse {
-    let ur_encoder = crypto_psbt.to_ur_encoder(400);
+    let message = crypto_psbt.to_bytes().unwrap();
+    let ur_encoder = ur::Encoder::new(
+        message.as_slice(),
+        400,
+        CryptoPSBT::get_registry_type().get_type(),
+    )
+    .unwrap();
     Response::success_object(Box::into_raw(Box::new(ur_encoder)) as PtrVoid).c_ptr()
 }

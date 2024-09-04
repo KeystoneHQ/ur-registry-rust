@@ -3,10 +3,10 @@ use crate::types::{PtrString, PtrVoid};
 use crate::utils::{convert_ptr_string_to_string, parse_ptr_string_to_bytes};
 use ur_registry::crypto_key_path::CryptoKeyPath;
 use ur_registry::ethereum::eth_sign_request::{DataType, EthSignRequest};
-use ur_registry::traits::{From, UR};
+use ur_registry::traits::{To, RegistryItem};
 
 pub fn resolve(data: Vec<u8>) -> PtrResponse {
-    match EthSignRequest::from_bytes(data) {
+    match EthSignRequest::try_from(data) {
         Ok(result) => Response::success_object(Box::into_raw(Box::new(result)) as PtrVoid).c_ptr(),
         Err(error) => Response::error(error.to_string()).c_ptr(),
     }
@@ -71,7 +71,13 @@ pub extern "C" fn eth_sign_request_construct(
 
 #[no_mangle]
 pub extern "C" fn eth_sign_request_get_ur_encoder(eth_sign_request: &mut EthSignRequest) -> PtrResponse {
-    let ur_encoder = eth_sign_request.to_ur_encoder(400);
+    let message = eth_sign_request.to_bytes().unwrap();
+    let ur_encoder = ur::Encoder::new(
+        message.as_slice(),
+        400,
+        EthSignRequest::get_registry_type().get_type(),
+    )
+    .unwrap();
     Response::success_object(Box::into_raw(Box::new(ur_encoder)) as PtrVoid).c_ptr()
 }
 

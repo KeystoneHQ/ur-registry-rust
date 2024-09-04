@@ -22,6 +22,8 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'com.keystone.ur_registry_flutter'
+
     compileSdkVersion 31
 
     compileOptions {

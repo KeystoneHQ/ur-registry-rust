@@ -16,7 +16,7 @@ pub extern "C" fn ur_decoder_receive(decoder: &mut Decoder, ur: PtrString) -> Pt
         Err(error) => return Response::error(error.to_string()).c_ptr(),
     };
     match decoder.receive(ur_str.as_str()) {
-        Err(error) => Response::error(error.to_string()).c_ptr(),
+        Err(error) => Response::error(format!("No data received before get result")).c_ptr(),
         _ => Response::success_null().c_ptr(),
     }
 }
@@ -61,6 +61,7 @@ pub extern "C" fn ur_decoder_resolve(decoder: &mut Decoder, target_type: PtrStri
         "sol-sign-request" => crate::solana::solana_sign_request::resolve(result),
         "eth-signature" => crate::ethereum::eth_signarure::resolve(result),
         "eth-sign-request" => crate::ethereum::eth_sign_request::resolve(result),
+        "cardano-signature" => crate::cardano::cardano_signature::resolve(result),
         t => Response::error(format!("type {} is not supported yet", t)).c_ptr(),
     }
 }
