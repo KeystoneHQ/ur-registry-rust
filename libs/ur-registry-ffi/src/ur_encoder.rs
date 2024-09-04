@@ -13,8 +13,3 @@ pub extern "C" fn ur_encoder_next_part(ur_encoder: &mut Encoder) -> PtrResponse 
     }
     .c_ptr()
 }
-
-#[no_mangle]
-pub extern "C" fn ur_encoder_is_single(ur_encoder: &mut Encoder) -> PtrResponse {
-    Response::success_boolean(ur_encoder.fragment_count() == 1).c_ptr()
-}
