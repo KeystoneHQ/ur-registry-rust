@@ -1,8 +1,26 @@
 SHELL := /bin/bash
 
-debug: clean_up generate_android_debug generate_ios_debug
+# Include .ndk_home if it exists (for ANDROID_NDK_HOME)
+-include .ndk_home
 
-release: clean_up generate_android generate_ios
+# Check for required environment
+check_env:
+	@if [ -z "$$ANDROID_NDK_HOME" ]; then \
+		echo "Error: ANDROID_NDK_HOME not set. Please create .ndk_home file from .ndk_home.example"; \
+		exit 1; \
+	fi
+
+# Prefer nightly toolchain if available, otherwise use default
+RUST_TOOLCHAIN_PATH := $(HOME)/.rustup/toolchains/nightly-aarch64-apple-darwin/bin
+ifneq ($(wildcard $(RUST_TOOLCHAIN_PATH)),)
+    export PATH := $(RUST_TOOLCHAIN_PATH):$(HOME)/.cargo/bin:$(PATH)
+else
+    export PATH := $(HOME)/.cargo/bin:$(PATH)
+endif
+
+debug: check_env clean_up generate_android_debug generate_ios_debug
+
+release: check_env clean_up generate_android generate_ios
 
 clean_up:
 	@echo "Step: Removing target"
