@@ -59,13 +59,13 @@ class AnimatedQRScanner extends StatelessWidget {
   final FailureCallback onFailed;
   final QrScannerOverlayShape? overlay;
 
-  const AnimatedQRScanner(
-      {Key? key,
-      required this.target,
-      required this.onSuccess,
-      required this.onFailed,
-      this.overlay})
-      : super(key: key);
+  const AnimatedQRScanner({
+    super.key,
+    required this.target,
+    required this.onSuccess,
+    required this.onFailed,
+    this.overlay,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -124,11 +124,5 @@ class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
       _cubit.onFailed("Error when receiving UR: $e");
       _cubit.reset();
     }
-  }
-
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
   }
 }

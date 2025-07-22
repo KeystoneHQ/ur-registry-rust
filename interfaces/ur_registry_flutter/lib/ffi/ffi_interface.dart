@@ -1,3 +1,5 @@
+// ignore_for_file: strict_top_level_inference
+
 abstract class DynamicLibrary {
   const DynamicLibrary();
 

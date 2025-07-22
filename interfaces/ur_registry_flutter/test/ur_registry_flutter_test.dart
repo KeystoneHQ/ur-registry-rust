@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, deprecated_member_use
+
 import 'package:convert/convert.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
