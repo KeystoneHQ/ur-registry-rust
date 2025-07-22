@@ -9,7 +9,7 @@ Yet another implementation for BC-UR registries.
 ### [flutter](./interfaces/ur_registry_flutter/README.md)
 
 ## Build
-1. Install Android NDK 22.1.7171670
+1. Install Android NDK 27.x or later (required for 16KB page size support)
 > Open your `Android Studio`
 > 
 > Open `SDK manager`
@@ -18,7 +18,7 @@ Yet another implementation for BC-UR registries.
 > 
 > Check `Show package Details`
 > 
-> Found target version.  
+> Find target version.  
 
 2. Install cargo-lipo, cbindgen and cargo-ndk
 > cargo install cargo-lipo
