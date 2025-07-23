@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-import 'dart:ffi';
+import 'package:ur_registry_flutter/ffi/ffi_factory.dart';
 import 'dart:io' show Platform;
 
 class UrRegistryFlutter {

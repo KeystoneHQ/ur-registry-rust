@@ -35,6 +35,7 @@ class _Cubit extends Cubit<_State> {
   @override
   Future<void> close() async {
     timer.cancel();
+    await super.close();
   }
 
   String get currentQR => _currentQR;
@@ -47,19 +48,14 @@ class AnimatedQRCodeStyle {
     this.size = 200,
   });
 
-  const AnimatedQRCodeStyle.factory()
-      : size = 200;
+  const AnimatedQRCodeStyle.factory() : size = 200;
 }
 
 class AnimatedQRCode extends StatelessWidget {
   final UREncoder urEncoder;
   final AnimatedQRCodeStyle style;
 
-  const AnimatedQRCode(
-      {Key? key,
-      required this.urEncoder,
-      this.style = const AnimatedQRCodeStyle.factory()})
-      : super(key: key);
+  const AnimatedQRCode({super.key, required this.urEncoder, this.style = const AnimatedQRCodeStyle.factory()});
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +67,7 @@ class AnimatedQRCode extends StatelessWidget {
 }
 
 class _AnimatedQRCode extends StatefulWidget {
-  const _AnimatedQRCode({Key? key}) : super(key: key);
+  const _AnimatedQRCode();
 
   @override
   _AnimatedQRCodeState createState() => _AnimatedQRCodeState();
@@ -92,7 +88,7 @@ class _AnimatedQRCodeState extends State<_AnimatedQRCode> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<_Cubit, _State>(builder: (context, state) {
-      if(state is _AnimatedQRDataState) {
+      if (state is _AnimatedQRDataState) {
         return QrImageView(
           data: state.data,
           size: _cubit.style.size,

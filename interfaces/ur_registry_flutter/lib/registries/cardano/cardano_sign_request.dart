@@ -1,6 +1,4 @@
-import 'dart:ffi';
-
-import 'package:ffi/ffi.dart';
+import 'package:ur_registry_flutter/ffi/ffi_factory.dart';
 import 'package:ur_registry_flutter/native_object.dart';
 import 'package:ur_registry_flutter/response.dart';
 import 'package:ur_registry_flutter/ur_encoder.dart';
@@ -32,17 +30,16 @@ typedef NativeNew = Pointer<Response> Function();
 
 class CardanoSignRequest extends NativeObject {
   late Construct nativeConstruct = lib
-      .lookup<NativeFunction<NativeConstruct>>("${nativePrefix}_construct")
+      .lookup<NativeFunction<NativeConstruct>>("${nativePrefix}_construct") //
       .asFunction<Construct>();
   late NativeGetUREncoder nativeGetUREncoder = lib
-      .lookup<NativeFunction<NativeGetUREncoder>>(
-          "${nativePrefix}_get_ur_encoder")
+      .lookup<NativeFunction<NativeGetUREncoder>>("${nativePrefix}_get_ur_encoder") //
       .asFunction();
-  late NativeNew nativeNew =
-      lib.lookup<NativeFunction<NativeNew>>("${nativePrefix}_new").asFunction();
+  late NativeNew nativeNew = lib
+      .lookup<NativeFunction<NativeNew>>("${nativePrefix}_new") //
+      .asFunction();
   late NativeGetRequestId nativeGetRequestId = lib
-      .lookup<NativeFunction<NativeGetRequestId>>(
-          "${nativePrefix}_get_request_id")
+      .lookup<NativeFunction<NativeGetRequestId>>("${nativePrefix}_get_request_id") //
       .asFunction();
 
   late String uuid;
@@ -57,7 +54,7 @@ class CardanoSignRequest extends NativeObject {
   CardanoSignRequest.factory(
     List<int> signData,
     String utxos,
-    String cert_keys,
+    String certKeys,
     String origin,
   ) : super() {
     uuid = const Uuid().v4();
@@ -66,12 +63,12 @@ class CardanoSignRequest extends NativeObject {
     final signDataStr = hex.encode(signData);
 
     final response = nativeConstruct(
-            uuidBufferStr.toNativeUtf8(),
-            signDataStr.toNativeUtf8(),
-            utxos.toNativeUtf8(),
-            cert_keys.toNativeUtf8(),
-            origin.toNativeUtf8())
-        .ref;
+      uuidBufferStr.toNativeUtf8(),
+      signDataStr.toNativeUtf8(),
+      utxos.toNativeUtf8(),
+      certKeys.toNativeUtf8(),
+      origin.toNativeUtf8(),
+    ).ref;
 
     nativeObject = response.getObject();
   }

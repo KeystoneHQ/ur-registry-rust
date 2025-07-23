@@ -1,5 +1,6 @@
-import 'dart:ffi';
-import 'package:ffi/ffi.dart';
+// ignore_for_file: unused_element
+
+import 'package:ur_registry_flutter/ffi/ffi_factory.dart';
 import 'package:ur_registry_flutter/native_object.dart';
 import 'package:ur_registry_flutter/registries/cardano/cardano_signature.dart';
 import 'package:ur_registry_flutter/registries/crypto_account.dart';
@@ -151,14 +152,14 @@ class URDecoder extends NativeObject {
       //   final response =
       //       nativeResolve(nativeObject, _cardanoCertKey.toNativeUtf8()).ref;
       //   return CryptoAccount(response.getObject());
-      // case SupportedType.cardanoSignDataRequest:
-      //   final response =
-      //       nativeResolve(nativeObject, _cardanoSignDataRequest.toNativeUtf8()).ref;
-      //   return CryptoAccount(response.getObject());
-      // case SupportedType.cardanoSignDataSignature:
-      //   final response =
-      //       nativeResolve(nativeObject, _cardanoSignDataSignature.toNativeUtf8()).ref;
-      //   return CryptoAccount(response.getObject());
+      case SupportedType.cardanoSignDataRequest:
+        final response =
+            nativeResolve(nativeObject, _cardanoSignDataRequest.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
+      case SupportedType.cardanoSignDataSignature:
+        final response =
+            nativeResolve(nativeObject, _cardanoSignDataSignature.toNativeUtf8()).ref;
+        return CryptoAccount(response.getObject());
       // case SupportedType.cardanoCatalystVotingRegistration:
       //   final response =
       //       nativeResolve(nativeObject, _cardanoCatalystVotingRegistration.toNativeUtf8()).ref;
