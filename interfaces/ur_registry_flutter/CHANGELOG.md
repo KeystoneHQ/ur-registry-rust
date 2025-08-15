@@ -1,3 +1,5 @@
+## 0.4.0-beta.1
+- Fix build error.
 ## 0.4.0-beta.0
 - Add more chain supports.
 ## 0.1.7

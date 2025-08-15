@@ -1,6 +1,6 @@
 name: ur_registry_flutter
 description: An ffi bridge for ur_registry_rust and flutter.
-version: 0.4.0-beta.0
+version: 0.4.0-beta.1
 homepage: https://github.com/KeystoneHQ/ur-registry-rust/interfaces/ur_registry_flutter
 
 environment:
