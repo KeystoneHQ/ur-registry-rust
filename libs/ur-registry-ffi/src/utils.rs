@@ -2,6 +2,17 @@ use crate::types::PtrString;
 use hex::FromHex;
 use std::ffi::{c_void, CStr, CString};
 
+pub fn remove_prefix<'a>(s: &'a str, prefix: &str) -> &'a str {
+    match s.strip_prefix(prefix) {
+        Some(s) => s,
+        None => s,
+    }
+}
+
+pub fn remove_prefix_0x(s: &str) -> &str {
+    remove_prefix(s, "0x")
+}
+
 #[no_mangle]
 pub extern "C" fn utils_free(any_ptr: *mut c_void) {
     if any_ptr.is_null() {
