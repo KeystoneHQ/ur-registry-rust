@@ -2,7 +2,7 @@ use crate::response::{PtrResponse, Response};
 use serde::Deserialize;
 use serde_json::json;
 use crate::types::{PtrString, PtrVoid};
-use crate::utils::convert_ptr_string_to_string;
+use crate::utils::{convert_ptr_string_to_string, remove_prefix_0x};
 use ur_registry::crypto_key_path::CryptoKeyPath;
 use ur_registry::cardano::cardano_sign_request::CardanoSignRequest;
 use ur_registry::cardano::cardano_cert_key::CardanoCertKey;
@@ -25,17 +25,6 @@ struct CertKey {
     key_hash: String,
     xfp: String,
     key_path: String,
-}
-
-pub fn remove_prefix<'a>(s: &'a str, prefix: &str) -> &'a str {
-    match s.strip_prefix(prefix) {
-        Some(s) => s,
-        None => s,
-    }
-}
-
-pub fn remove_prefix_0x(s: &str) -> &str {
-    remove_prefix(s, "0x")
 }
 
 #[no_mangle]
