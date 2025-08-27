@@ -1,4 +1,4 @@
-import 'package:ur_registry_flutter/ffi/ffi_interface.dart';
+import 'package:ur_registry_flutter/ffi/ffi_factory.dart';
 import 'package:ur_registry_flutter/native_object.dart';
 import 'package:ur_registry_flutter/response.dart';
 import 'package:uuid/uuid.dart';
