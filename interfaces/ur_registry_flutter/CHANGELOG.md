@@ -1,3 +1,5 @@
+## 0.4.0-beta.2
+- Fix build error.
 ## 0.4.0-beta.1
 - Fix build error.
 ## 0.4.0-beta.0
