@@ -1,6 +1,4 @@
-import 'dart:ffi';
-
-import 'package:ffi/ffi.dart';
+import 'package:ur_registry_flutter/ffi/ffi_factory.dart';
 import 'package:ur_registry_flutter/native_object.dart';
 import 'package:ur_registry_flutter/response.dart';
 import 'package:ur_registry_flutter/ur_encoder.dart';

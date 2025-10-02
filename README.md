@@ -9,7 +9,7 @@ Yet another implementation for BC-UR registries.
 ### [flutter](./interfaces/ur_registry_flutter/README.md)
 
 ## Build
-1. Install Android NDK 22.1.7171670
+1. Install Android NDK 27.x or later (required for 16KB page size support)
 > Open your `Android Studio`
 > 
 > Open `SDK manager`
@@ -18,30 +18,26 @@ Yet another implementation for BC-UR registries.
 > 
 > Check `Show package Details`
 > 
-> Found target version.  
+> Find target version (NDK 27.x or later)
 
-2. Install cargo-lipo, cbindgen and cargo-ndk
+2. Install Rust nightly toolchain (required due to external dependencies)
+> rustup install nightly
+> 
+> rustup target add --toolchain nightly aarch64-linux-android armv7-linux-androideabi i686-linux-android
+> 
+> rustup target add --toolchain nightly aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
+
+3. Install cargo-lipo and cargo-ndk
 > cargo install cargo-lipo
 >
 > cargo install cargo-ndk
 
-3. Add rust components
+4. Configure Android NDK
 
-Android:
-> rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android
-
-
-iOS:
+Copy `.ndk_home.example` to `.ndk_home` and update it with your NDK path:
+> cp .ndk_home.example .ndk_home
 > 
-> rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
-
-4. Config
-
-Android:
-
-Make sure you only have NDK 22.1.7171670, if not, you should setup the environment variable firstly:
-
-Copy the file .ndk_home.example and change the content to your version;
+> Edit .ndk_home to point to your NDK installation
 
 5. Build
 

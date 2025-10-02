@@ -62,7 +62,7 @@ class AnimatedQRCode extends StatelessWidget {
 }
 
 class _AnimatedQRCode extends StatefulWidget {
-  const _AnimatedQRCode({Key? key}) : super(key: key);
+  const _AnimatedQRCode();
 
   @override
   _AnimatedQRCodeState createState() => _AnimatedQRCodeState();

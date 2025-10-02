@@ -21,11 +21,11 @@ class _Cubit extends Cubit<_State> {
   bool succeed = false;
 
   _Cubit(
-      this.target,
-      this.onSuccess,
-      this.onFailed, {
-        this.overlay,
-      }) : super(_InitialState());
+    this.target,
+    this.onSuccess,
+    this.onFailed, {
+    this.overlay,
+  }) : super(_InitialState());
 
   void receiveQRCode(String? code) {
     try {
@@ -57,13 +57,18 @@ class AnimatedQRScanner extends StatelessWidget {
   final FailureCallback onFailed;
   final Widget? overlay;
 
-  const AnimatedQRScanner({Key? key, required this.target, required this.onSuccess, required this.onFailed, this.overlay})
-      : super(key: key);
+  const AnimatedQRScanner(
+      {super.key,
+      required this.target,
+      required this.onSuccess,
+      required this.onFailed,
+      this.overlay});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => _Cubit(target, onSuccess, onFailed, overlay: overlay),
+      create: (BuildContext context) =>
+          _Cubit(target, onSuccess, onFailed, overlay: overlay),
       child: _AnimatedQRScanner(),
     );
   }
@@ -75,7 +80,8 @@ class _AnimatedQRScanner extends StatefulWidget {
 }
 
 class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
-  final MobileScannerController controller = MobileScannerController(detectionSpeed: DetectionSpeed.noDuplicates);
+  final MobileScannerController controller =
+      MobileScannerController(detectionSpeed: DetectionSpeed.noDuplicates);
   late final _Cubit _cubit;
 
   @override

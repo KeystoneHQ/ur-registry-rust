@@ -1,4 +1,4 @@
-import 'dart:ffi';
+import 'package:ur_registry_flutter/ffi/ffi_factory.dart';
 import 'package:ur_registry_flutter/registries/crypto_hd_key.dart';
 import 'package:ur_registry_flutter/response.dart';
 import '../../native_object.dart';

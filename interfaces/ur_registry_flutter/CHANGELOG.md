@@ -1,3 +1,22 @@
+## 0.4.1
+- Updated android build and compile tools
+- Increased min android version to 26
+## 0.4.0
+- Support Cardano sign message and CIP8 message.
+## 0.4.0-beta.6
+- Update ios Podspec
+## 0.4.0-beta.5
+- Fix an existing ADA sign request related issue.
+## 0.4.0-beta.4
+- Fix an build issue.
+## 0.4.0-beta.3
+- Fix method not exported error and keep API consistency. 
+## 0.4.0-beta.2
+- Fix build error.
+## 0.4.0-beta.1
+- Fix build error.
+## 0.4.0-beta.0
+- Add more chain supports.
 ## 0.1.7
 - add iOS headers. 
 ## 0.1.6
