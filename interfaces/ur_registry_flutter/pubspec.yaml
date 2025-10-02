@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^9.0.0
-  mobile_scanner: ^4.0.1
+  mobile_scanner: ^6.0.0
   pretty_qr_code: ^3.3.0
   # qr_code_scanner_plus: ^2.0.3
   # qr_flutter: ^4.1.0

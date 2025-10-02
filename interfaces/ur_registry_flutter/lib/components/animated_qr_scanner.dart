@@ -94,7 +94,8 @@ class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
   Widget build(BuildContext context) {
     return MobileScanner(
       controller: controller,
-      overlay: _cubit.overlay,
+      overlayBuilder:
+          _cubit.overlay != null ? (context, _) => _cubit.overlay! : null,
       onDetect: (BarcodeCapture capture) {
         for (final barcode in capture.barcodes) {
           _cubit.receiveQRCode(barcode.rawValue);

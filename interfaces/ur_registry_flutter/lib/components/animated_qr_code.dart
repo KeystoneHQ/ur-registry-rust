@@ -47,10 +47,10 @@ class AnimatedQRCode extends StatelessWidget {
   final PrettyQrDecoration? decoration;
 
   const AnimatedQRCode({
-    Key? key,
+    super.key,
     required this.urEncoder,
     this.decoration,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
