@@ -220,10 +220,10 @@ packages:
     dependency: transitive
     description:
       name: qr_code_scanner_plus
-      sha256: "11a91e185fbcd3314b470369878bcae7ecd233d0c3d78f864b67fa9a264f22c3"
+      sha256: dae0596b2763c2fd0294f5cfddb1d3a21577ae4dc7fc1449eb5aafc957872f61
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   qr_flutter:
     dependency: transitive
     description:
