@@ -12,7 +12,6 @@ dependencies:
   ffi: ^2.1.0
   flutter:
     sdk: flutter
-  flutter_bloc: ^9.0.0
   qr_code_scanner_plus: ^2.1.1
   qr_flutter: ^4.1.0
   uuid: ^4.1.0
