@@ -32,7 +32,7 @@ clean_up:
 	@echo "Step: Removing target"
 	rm -rf ./target
 	rm -rf $(JNILIBS)
-	rm -rf $(FLUTTER_PLUGIN)/ios/ur_registry_ffi.xcframework
+	rm -rf $(FLUTTER_PLUGIN)/ios/ur_registry_flutter/ur_registry_ffi.xcframework
 	mkdir -p $(JNILIBS)/arm64-v8a
 	mkdir -p $(JNILIBS)/armeabi-v7a
 	mkdir -p $(JNILIBS)/x86
@@ -66,7 +66,7 @@ generate_ios:
 	    -library target/aarch64-apple-ios/release/libur_registry_ffi.a -headers $(HEADERS) \
 	    -library target/sim/libur_registry_ffi.a -headers $(HEADERS) \
 	    -output target/URRegistryFFI.xcframework
-	cp -R target/URRegistryFFI.xcframework $(FLUTTER_PLUGIN)/ios/ur_registry_ffi.xcframework
+	cp -R target/URRegistryFFI.xcframework $(FLUTTER_PLUGIN)/ios/ur_registry_flutter/ur_registry_ffi.xcframework
 
 generate_ios_debug:
 	@echo "Step: Generate iOS debug builds"
@@ -83,7 +83,7 @@ generate_ios_debug:
 	    -library target/aarch64-apple-ios/debug/libur_registry_ffi.a -headers $(HEADERS) \
 	    -library target/sim/libur_registry_ffi.a -headers $(HEADERS) \
 	    -output target/URRegistryFFI.xcframework
-	cp -R target/URRegistryFFI.xcframework $(FLUTTER_PLUGIN)/ios/ur_registry_ffi.xcframework
+	cp -R target/URRegistryFFI.xcframework $(FLUTTER_PLUGIN)/ios/ur_registry_flutter/ur_registry_ffi.xcframework
 
 generate_android_debug:
 	@echo "Step: Generating Android builds"

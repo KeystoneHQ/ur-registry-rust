@@ -11,14 +11,11 @@ let package = Package(
     targets: [
         .target(
             name: "ur_registry_flutter",
-            dependencies: ["URRegistryFFI"],
-            cSettings: [
-                .headerSearchPath("include/ur_registry_flutter")
-            ]
+            dependencies: ["URRegistryFFI"]
         ),
         .binaryTarget(
             name: "URRegistryFFI",
-            path: "../ur_registry_ffi.xcframework"
+            path: "ur_registry_ffi.xcframework"
         )
     ]
 )

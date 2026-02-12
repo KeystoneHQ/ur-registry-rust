@@ -2,6 +2,7 @@ import Flutter
 import UIKit
 import URRegistryFFI
 
+@objc(UrRegistryFlutterPlugin)
 public class SwiftUrRegistryFlutterPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "ur_registry_flutter", binaryMessenger: registrar.messenger())
