@@ -27,9 +27,7 @@ Yet another implementation for BC-UR registries.
 > 
 > rustup target add --toolchain nightly aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
 
-3. Install cargo-lipo and cargo-ndk
-> cargo install cargo-lipo
->
+3. Install cargo-ndk
 > cargo install cargo-ndk
 
 4. Configure Android NDK

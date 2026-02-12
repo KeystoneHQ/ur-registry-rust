@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import URRegistryFFI
 
 public class SwiftUrRegistryFlutterPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {

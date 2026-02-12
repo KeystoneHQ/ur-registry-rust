@@ -1,3 +1,7 @@
+## 0.5.0
+- Replaced iOS fat binary with XCFramework (fixes Xcode 26+ arm64 simulator support)
+- Added Swift Package Manager support for iOS
+- Rebuilt all native libraries
 ## 0.4.1
 - Updated android build and compile tools
 - Increased min android version to 26
