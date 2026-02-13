@@ -21,7 +21,7 @@ android {
     defaultConfig {
         applicationId "com.example.ur_registry_flutter_example"
         minSdk 26
-        1
+        
         targetSdk flutter.targetSdkVersion
         versionCode flutter.versionCode
         versionName flutter.versionName
