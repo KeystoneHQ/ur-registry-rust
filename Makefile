@@ -85,6 +85,12 @@ generate_ios_debug:
 	    -output target/URRegistryFFI.xcframework
 	cp -R target/URRegistryFFI.xcframework $(FLUTTER_PLUGIN)/ios/ur_registry_flutter/ur_registry_ffi.xcframework
 
+test:
+	@echo "Step: Building macOS dylib for testing"
+	cargo build -p ur-registry-ffi
+	cp ./target/debug/libur_registry_ffi.dylib $(FLUTTER_PLUGIN)/libur_registry_ffi.dylib
+	cd $(FLUTTER_PLUGIN) && flutter test
+
 generate_android_debug:
 	@echo "Step: Generating Android builds"
 	@echo "1: arm64-v8a"
