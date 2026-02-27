@@ -1,43 +1,83 @@
-use crate::response::{PtrResponse, Response, Value};
+use crate::response::{PtrResponse, Response};
 use crate::types::PtrString;
 use hex::encode;
 use std::ffi::{c_void, CStr};
 use ur::Decoder;
 
-#[no_mangle]
-pub extern "C" fn ur_decoder_new() -> PtrResponse {
-    Response::success_object(Box::into_raw(Box::new(ur::Decoder::default())) as *mut c_void).c_ptr()
+pub struct URDecoderWrapper {
+    decoder: Decoder,
+    single_part_result: Option<Vec<u8>>,
+}
+
+impl URDecoderWrapper {
+    fn new() -> Self {
+        Self {
+            decoder: Decoder::default(),
+            single_part_result: None,
+        }
+    }
+
+    fn receive(&mut self, ur_str: &str) -> Result<(), String> {
+        match ur::ur::decode(ur_str) {
+            Ok((kind, data)) => match kind {
+                ur::ur::Kind::SinglePart => {
+                    self.single_part_result = Some(data);
+                    Ok(())
+                }
+                ur::ur::Kind::MultiPart => {
+                    self.decoder.receive(ur_str).map_err(|e| e.to_string())
+                }
+            },
+            Err(e) => Err(e.to_string()),
+        }
+    }
+
+    fn complete(&self) -> bool {
+        self.single_part_result.is_some() || self.decoder.complete()
+    }
+
+    fn message(&self) -> Result<Option<Vec<u8>>, String> {
+        if let Some(ref data) = self.single_part_result {
+            return Ok(Some(data.clone()));
+        }
+        self.decoder.message().map_err(|e| e.to_string())
+    }
 }
 
 #[no_mangle]
-pub extern "C" fn ur_decoder_receive(decoder: &mut Decoder, ur: PtrString) -> PtrResponse {
+pub extern "C" fn ur_decoder_new() -> PtrResponse {
+    Response::success_object(Box::into_raw(Box::new(URDecoderWrapper::new())) as *mut c_void).c_ptr()
+}
+
+#[no_mangle]
+pub extern "C" fn ur_decoder_receive(decoder: &mut URDecoderWrapper, ur: PtrString) -> PtrResponse {
     let ur_str = match unsafe { CStr::from_ptr(ur) }.to_str() {
         Ok(value) => value.to_lowercase(),
         Err(error) => return Response::error(error.to_string()).c_ptr(),
     };
     match decoder.receive(ur_str.as_str()) {
-        Err(error) => Response::error(format!("No data received before get result")).c_ptr(),
+        Err(error) => Response::error(error.to_string()).c_ptr(),
         _ => Response::success_null().c_ptr(),
     }
 }
 
 #[no_mangle]
-pub extern "C" fn ur_decoder_is_complete(decoder: &mut Decoder) -> PtrResponse {
+pub extern "C" fn ur_decoder_is_complete(decoder: &mut URDecoderWrapper) -> PtrResponse {
     Response::success_boolean(decoder.complete()).c_ptr()
 }
 
-fn get_result(decoder: &mut Decoder) -> Result<Vec<u8>, String> {
+fn get_result(decoder: &mut URDecoderWrapper) -> Result<Vec<u8>, String> {
     match decoder.message() {
         Ok(m) => match m {
             Some(message) => Ok(message),
             None => Err(format!("No data received before get result")),
         },
-        Err(error) => Err(error.to_string()),
+        Err(error) => Err(error),
     }
 }
 
 #[no_mangle]
-pub extern "C" fn ur_decoder_result(decoder: &mut Decoder) -> PtrResponse {
+pub extern "C" fn ur_decoder_result(decoder: &mut URDecoderWrapper) -> PtrResponse {
     match get_result(decoder) {
         Ok(message) => Response::success_string(encode(message)).c_ptr(),
         Err(error) => Response::error(error).c_ptr(),
@@ -45,7 +85,7 @@ pub extern "C" fn ur_decoder_result(decoder: &mut Decoder) -> PtrResponse {
 }
 
 #[no_mangle]
-pub extern "C" fn ur_decoder_resolve(decoder: &mut Decoder, target_type: PtrString) -> PtrResponse {
+pub extern "C" fn ur_decoder_resolve(decoder: &mut URDecoderWrapper, target_type: PtrString) -> PtrResponse {
     let result = match get_result(decoder) {
         Ok(res) => res,
         Err(error) => return Response::error(error.to_string()).c_ptr(),

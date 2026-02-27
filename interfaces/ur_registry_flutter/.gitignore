@@ -27,3 +27,6 @@
 .dart_tool/
 .packages
 build/
+
+# macOS native library (built for local testing only)
+*.dylib

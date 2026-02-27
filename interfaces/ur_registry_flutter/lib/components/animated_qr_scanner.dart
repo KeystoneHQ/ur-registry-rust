@@ -1,59 +1,14 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'package:ur_registry_flutter/native_object.dart';
 import 'package:ur_registry_flutter/ur_decoder.dart';
 
-abstract class _State {}
-
-class _InitialState extends _State {}
-
 typedef SuccessCallback = void Function(NativeObject);
 typedef FailureCallback = void Function(String);
 
-class _Cubit extends Cubit<_State> {
-  late final SupportedType target;
-  final SuccessCallback onSuccess;
-  final FailureCallback onFailed;
-  // final OnProcessed? onProcessed;
-  final QrScannerOverlayShape? overlay;
-  URDecoder urDecoder = URDecoder();
-  bool succeed = false;
-
-  _Cubit(
-    this.target,
-    this.onSuccess,
-    this.onFailed, {
-    this.overlay,
-  }) : super(_InitialState());
-
-  void receiveQRCode(String? code) {
-    try {
-      if (code != null) {
-        urDecoder.receive(code);
-        if (urDecoder.isComplete()) {
-          final result = urDecoder.resolve(target);
-          if (!succeed) {
-            onSuccess(result);
-            succeed = true;
-          }
-        }
-      }
-    } catch (e) {
-      onFailed("Error when receiving UR $e");
-      reset();
-    }
-  }
-
-  void reset() {
-    urDecoder = URDecoder();
-    succeed = false;
-  }
-}
-
-class AnimatedQRScanner extends StatelessWidget {
+class AnimatedQRScanner extends StatefulWidget {
   final SupportedType target;
   final SuccessCallback onSuccess;
   final FailureCallback onFailed;
@@ -68,37 +23,47 @@ class AnimatedQRScanner extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => _Cubit(target, onSuccess, onFailed, overlay: overlay),
-      child: _AnimatedQRScanner(),
-    );
-  }
+  State<AnimatedQRScanner> createState() => _AnimatedQRScannerState();
 }
 
-class _AnimatedQRScanner extends StatefulWidget {
-  @override
-  _AnimatedQRScannerState createState() => _AnimatedQRScannerState();
-}
-
-class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
+class _AnimatedQRScannerState extends State<AnimatedQRScanner> {
   final GlobalKey<State<StatefulWidget>> keyQr = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
-  late final _Cubit _cubit;
-
-  @override
-  void initState() {
-    _cubit = BlocProvider.of(context);
-    super.initState();
-  }
+  URDecoder _urDecoder = URDecoder();
+  bool _succeed = false;
 
   @override
   Future<void> reassemble() async {
-    if (Platform.isAndroid) {
-      await controller!.pauseCamera();
+    if (controller case final controller?) {
+      if (Platform.isAndroid) {
+        await controller.pauseCamera();
+      }
+      controller.resumeCamera();
     }
-    controller!.resumeCamera();
     super.reassemble();
+  }
+
+  void _receiveQRCode(String? code) {
+    try {
+      if (code != null) {
+        _urDecoder.receive(code);
+        if (_urDecoder.isComplete()) {
+          final result = _urDecoder.resolve(widget.target);
+          if (!_succeed) {
+            widget.onSuccess(result);
+            _succeed = true;
+          }
+        }
+      }
+    } catch (e) {
+      widget.onFailed("Error when receiving UR $e");
+      _reset();
+    }
+  }
+
+  void _reset() {
+    _urDecoder = URDecoder();
+    _succeed = false;
   }
 
   @override
@@ -106,7 +71,7 @@ class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
     return QRView(
       key: keyQr,
       onQRViewCreated: onQRViewCreated,
-      overlay: _cubit.overlay,
+      overlay: widget.overlay,
     );
   }
 
@@ -118,11 +83,11 @@ class _AnimatedQRScannerState extends State<_AnimatedQRScanner> {
     reassemble();
     try {
       controller.scannedDataStream.listen((event) {
-        _cubit.receiveQRCode(event.code);
+        _receiveQRCode(event.code);
       });
     } catch (e) {
-      _cubit.onFailed("Error when receiving UR: $e");
-      _cubit.reset();
+      widget.onFailed("Error when receiving UR: $e");
+      _reset();
     }
   }
 }

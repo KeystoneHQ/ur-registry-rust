@@ -1,6 +1,6 @@
 name: ur_registry_flutter
 description: An ffi bridge for ur_registry_rust and flutter.
-version: 0.4.1
+version: 0.5.0
 homepage: https://github.com/KeystoneHQ/ur-registry-rust/interfaces/ur_registry_flutter
 
 environment:
@@ -12,8 +12,7 @@ dependencies:
   ffi: ^2.1.0
   flutter:
     sdk: flutter
-  flutter_bloc: ^9.0.0
-  qr_code_scanner_plus: ^2.0.3
+  qr_code_scanner_plus: ^2.1.1
   qr_flutter: ^4.1.0
   uuid: ^4.1.0
 
@@ -21,6 +20,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  test: ^1.28.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

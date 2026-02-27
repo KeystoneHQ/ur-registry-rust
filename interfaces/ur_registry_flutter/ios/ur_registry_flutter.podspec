@@ -13,17 +13,15 @@ A new flutter plugin project.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
-  s.public_header_files = 'Classes**/*.h'
-  s.source_files = 'Classes/**/*'
-  s.vendored_libraries = "**/*.a"
+  s.source_files = 'ur_registry_flutter/Sources/ur_registry_flutter/**/*.swift'
+  s.vendored_frameworks = "ur_registry_flutter/ur_registry_ffi.xcframework"
   s.dependency 'Flutter'
-  s.platform = :ios, '9.0'
+  s.platform = :ios, '12.0'
 
-  # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64 i386',
-    'OTHER_LDFLAGS' => '-force_load $(PODS_TARGET_SRCROOT)/libur_registry_ffi.a'
+    'OTHER_LDFLAGS[sdk=iphoneos*]' => '-force_load $(PODS_TARGET_SRCROOT)/ur_registry_flutter/ur_registry_ffi.xcframework/ios-arm64/libur_registry_ffi.a',
+    'OTHER_LDFLAGS[sdk=iphonesimulator*]' => '-force_load $(PODS_TARGET_SRCROOT)/ur_registry_flutter/ur_registry_ffi.xcframework/ios-arm64_x86_64-simulator/libur_registry_ffi.a'
   }
   s.swift_version = '5.0'
 end

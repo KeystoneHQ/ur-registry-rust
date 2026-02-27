@@ -3,6 +3,11 @@ SHELL := /bin/bash
 # Include .ndk_home if it exists (for ANDROID_NDK_HOME)
 -include .ndk_home
 
+# Plugin paths
+FLUTTER_PLUGIN := ./interfaces/ur_registry_flutter
+JNILIBS        := $(FLUTTER_PLUGIN)/android/src/main/jniLibs
+HEADERS        := $(FLUTTER_PLUGIN)/include
+
 # Check for required environment
 check_env:
 	@if [ -z "$$ANDROID_NDK_HOME" ]; then \
@@ -26,12 +31,11 @@ release: check_env clean_up generate_android generate_ios
 clean_up:
 	@echo "Step: Removing target"
 	rm -rf ./target
-	rm -rf ./interfaces/ur_registry_flutter/android/src/main/jniLibs
-	rm -f ./interfaces/ur_registry_flutter/ios/libur_registry_ffi.a
-	mkdir ./interfaces/ur_registry_flutter/android/src/main/jniLibs
-	mkdir ./interfaces/ur_registry_flutter/android/src/main/jniLibs/arm64-v8a
-	mkdir ./interfaces/ur_registry_flutter/android/src/main/jniLibs/armeabi-v7a
-	mkdir ./interfaces/ur_registry_flutter/android/src/main/jniLibs/x86
+	rm -rf $(JNILIBS)
+	rm -rf $(FLUTTER_PLUGIN)/ios/ur_registry_flutter/ur_registry_ffi.xcframework
+	mkdir -p $(JNILIBS)/arm64-v8a
+	mkdir -p $(JNILIBS)/armeabi-v7a
+	mkdir -p $(JNILIBS)/x86
 	@echo "Cleaning up"
 
 generate_android:
@@ -43,28 +47,49 @@ generate_android:
 	@echo "3: x86"
 	cargo ndk -t x86 build -p ur-registry-ffi --release
 	@echo "Android buildup"
-	cp ./target/aarch64-linux-android/release/libur_registry_ffi.so ./interfaces/ur_registry_flutter/android/src/main/jniLibs/arm64-v8a/libur_registry_ffi.so
-	cp ./target/armv7-linux-androideabi/release/libur_registry_ffi.so ./interfaces/ur_registry_flutter/android/src/main/jniLibs/armeabi-v7a/libur_registry_ffi.so
-	cp ./target/i686-linux-android/release/libur_registry_ffi.so ./interfaces/ur_registry_flutter/android/src/main/jniLibs/x86/libur_registry_ffi.so
+	cp ./target/aarch64-linux-android/release/libur_registry_ffi.so $(JNILIBS)/arm64-v8a/libur_registry_ffi.so
+	cp ./target/armv7-linux-androideabi/release/libur_registry_ffi.so $(JNILIBS)/armeabi-v7a/libur_registry_ffi.so
+	cp ./target/i686-linux-android/release/libur_registry_ffi.so $(JNILIBS)/x86/libur_registry_ffi.so
 
 generate_ios:
 	@echo "Step: Generate iOS builds"
-	cargo lipo --release
-	cp ./target/universal/release/libur_registry_ffi.a ./interfaces/ur_registry_flutter/ios/
-
-generate_xcframework:
-	@echo "Step: Generate XCFramework"
-	cargo build -r --target aarch64-apple-ios
-	cargo build -r --target x86_64-apple-ios
-	cargo build -r --target aarch64-apple-ios-sim
+	cargo build --release --target aarch64-apple-ios -p ur-registry-ffi
+	cargo build --release --target aarch64-apple-ios-sim -p ur-registry-ffi
+	cargo build --release --target x86_64-apple-ios -p ur-registry-ffi
+	@echo "Creating simulator fat library"
 	mkdir -p target/sim
-	lipo target/aarch64-apple-ios-sim/release/libur_registry_ffi.a target/x86_64-apple-ios/release/libur_registry_ffi.a -create -output target/sim/libur_registry_ffi.a
-	xcodebuild -create-xcframework -library target/sim/libur_registry_ffi.a -headers include -library target/aarch64-apple-ios/release/libur_registry_ffi.a -headers include -output target/URRegistryFFI.xcframework
+	lipo target/aarch64-apple-ios-sim/release/libur_registry_ffi.a \
+	     target/x86_64-apple-ios/release/libur_registry_ffi.a \
+	     -create -output target/sim/libur_registry_ffi.a
+	@echo "Creating XCFramework"
+	xcodebuild -create-xcframework \
+	    -library target/aarch64-apple-ios/release/libur_registry_ffi.a -headers $(HEADERS) \
+	    -library target/sim/libur_registry_ffi.a -headers $(HEADERS) \
+	    -output target/URRegistryFFI.xcframework
+	cp -R target/URRegistryFFI.xcframework $(FLUTTER_PLUGIN)/ios/ur_registry_flutter/ur_registry_ffi.xcframework
 
 generate_ios_debug:
-	@echo "Step: Generate iOS builds"
-	cargo lipo
-	cp ./target/universal/debug/libur_registry_ffi.a ./interfaces/ur_registry_flutter/ios/
+	@echo "Step: Generate iOS debug builds"
+	cargo build --target aarch64-apple-ios -p ur-registry-ffi
+	cargo build --target aarch64-apple-ios-sim -p ur-registry-ffi
+	cargo build --target x86_64-apple-ios -p ur-registry-ffi
+	@echo "Creating simulator fat library"
+	mkdir -p target/sim
+	lipo target/aarch64-apple-ios-sim/debug/libur_registry_ffi.a \
+	     target/x86_64-apple-ios/debug/libur_registry_ffi.a \
+	     -create -output target/sim/libur_registry_ffi.a
+	@echo "Creating XCFramework"
+	xcodebuild -create-xcframework \
+	    -library target/aarch64-apple-ios/debug/libur_registry_ffi.a -headers $(HEADERS) \
+	    -library target/sim/libur_registry_ffi.a -headers $(HEADERS) \
+	    -output target/URRegistryFFI.xcframework
+	cp -R target/URRegistryFFI.xcframework $(FLUTTER_PLUGIN)/ios/ur_registry_flutter/ur_registry_ffi.xcframework
+
+test:
+	@echo "Step: Building macOS dylib for testing"
+	cargo build -p ur-registry-ffi
+	cp ./target/debug/libur_registry_ffi.dylib $(FLUTTER_PLUGIN)/libur_registry_ffi.dylib
+	cd $(FLUTTER_PLUGIN) && flutter test
 
 generate_android_debug:
 	@echo "Step: Generating Android builds"
@@ -75,6 +100,6 @@ generate_android_debug:
 	@echo "3: x86"
 	cargo ndk -t x86 build -p ur-registry-ffi
 	@echo "Android buildup"
-	cp ./target/aarch64-linux-android/debug/libur_registry_ffi.so ./interfaces/ur_registry_flutter/android/src/main/jniLibs/arm64-v8a/libur_registry_ffi.so
-	cp ./target/armv7-linux-androideabi/debug/libur_registry_ffi.so ./interfaces/ur_registry_flutter/android/src/main/jniLibs/armeabi-v7a/libur_registry_ffi.so
-	cp ./target/i686-linux-android/debug/libur_registry_ffi.so ./interfaces/ur_registry_flutter/android/src/main/jniLibs/x86/libur_registry_ffi.so
+	cp ./target/aarch64-linux-android/debug/libur_registry_ffi.so $(JNILIBS)/arm64-v8a/libur_registry_ffi.so
+	cp ./target/armv7-linux-androideabi/debug/libur_registry_ffi.so $(JNILIBS)/armeabi-v7a/libur_registry_ffi.so
+	cp ./target/i686-linux-android/debug/libur_registry_ffi.so $(JNILIBS)/x86/libur_registry_ffi.so

@@ -7,10 +7,8 @@ import 'package:ur_registry_flutter/native_object.dart';
 import 'package:ur_registry_flutter/registries/crypto_account.dart';
 import 'package:ur_registry_flutter/registries/crypto_hd_key.dart';
 import 'package:ur_registry_flutter/registries/crypto_psbt.dart';
-import 'package:ur_registry_flutter/registries/ethereum/eth_sign_request.dart';
 import 'package:ur_registry_flutter/registries/ethereum/eth_signature.dart';
 import 'package:ur_registry_flutter/registries/extend/crypto_multi_accounts.dart';
-import 'package:ur_registry_flutter/registries/solana/sol_sign_request.dart';
 import 'package:ur_registry_flutter/registries/solana/sol_signature.dart';
 import 'package:ur_registry_flutter/ur_decoder.dart';
 import 'package:ur_registry_flutter/ur_encoder.dart';
@@ -55,22 +53,6 @@ void main() {
     }
   });
 
-  test("generate solana transaction", () async {
-    List<int> signData = List.from(hex.decoder.convert("01020304"));
-    String path = "M/44'/501'/0'/0/1";
-    String xfp = "01020304";
-    List<int> pubkey = List.from(hex.decoder.convert("010203040506"));
-    String origin = "BitKeep";
-    int signType = SolSignRequest.transaction; // 1: Transaction, 2: Message
-    SolSignRequest solSignRequest =
-        SolSignRequest.factory(signData, path, xfp, pubkey, origin, signType);
-    UREncoder urEncoder = solSignRequest.toUREncoder();
-    String requestId = solSignRequest.uuid; //get request id;
-    while (true) {
-      // renderQR(urEncoder.nextPart());
-    }
-  });
-
   test("collect sol signature", () async {
     String ur =
         "UR:SOL-SIGNATURE/OEADTPDAGDNDCAWMGTFRKIGRPMNDUTDNBTKGFSSBJNAOHDFZTYWTOSRFTAHPRDCTRKBEGYLOGDGHJKBAFHFLAMFWLOHGHTPSSEAOZORSIMNYBBTNNBIYNLCKENBTFMEEAMSABNAEOXASJKWSWFKEKIIECKHPECCKSSPTNDZELNWFECYLDRCYHKWS";
@@ -96,16 +78,6 @@ void main() {
     nativeObject as CryptoAccount;
     List<CryptoHDKey> keys = nativeObject.getKeys();
     String masterFingerprint = nativeObject.getMasterFingerprint();
-  });
-
-  test("construct psbt", () async {
-    String psbtHex =
-        '70736274ff01009a020000000258e87a21b56daf0c23be8e7070456c336f7cbaa5c8757924f545887bb2abdd750000000000ffffffff838d0427d0ec650a68aa46bb0b098aea4422c071b2ca78352a077959d07cea1d0100000000ffffffff0270aaf00800000000160014d85c2b71d0060b09c9886aeb815e50991dda124d00e1f5050000000016001400aea9a2e5f0f876a588df5546e8742d1d87008f000000000000000000';
-    CryptoPSBT cryptoPSBT = CryptoPSBT.factory(hex.decode(psbtHex));
-    UREncoder urEncoder = cryptoPSBT.toUREncoder();
-    while (true) {
-      // renderQR(urEncoder.nextPart());
-    }
   });
 
   test("receive psbt", () async {
@@ -136,23 +108,6 @@ void main() {
     key.getSourceFingerprint(); //get master fingerprint
   });
 
-  test("construct eth tx", () async {
-    List<int> signData = List.from(hex.decoder.convert("01020304"));
-    String path = "M/44'/60'/0'/0/0";
-    String xfp = "01020304";
-    int chainId = 0;
-    String address = "address";
-    String origin = "BitKeep";
-    int signType = EthSignRequest.typedTransaction;
-    EthSignRequest ethSignRequest = EthSignRequest.factory(
-        signData, signType, chainId, path, xfp, address, origin);
-    UREncoder urEncoder = ethSignRequest.toUREncoder();
-    String requestId = ethSignRequest.uuid; //get request id;
-    while (true) {
-      // renderQR(urEncoder.nextPart());
-    }
-  });
-
   test("get eth signature", () async {
     String ur =
         "UR:ETH-SIGNATURE/OEADTPDAGDNDCAWMGTFRKIGRPMNDUTDNBTKGFSSBJNAOHDFPTYWTOSRFTAHPRDCTRKBEGYLOGDGHJKBAFHFLAMFWLOHGHTPSSEAOZORSIMNYBBTNNBIYNLCKENBTFMEEAMSABNAEOXASJKWSWFKEKIIECKHPECCKSSPTNDZELNWFECYLBWDLSGVAZT";
@@ -164,5 +119,81 @@ void main() {
     signature as EthSignature;
     signature.getRequestId(); // uuid
     signature.getSignature(); // signature as [r, s, v]
+  });
+
+  test("decode single-part UR with assertions", () async {
+    // This UR uses the old single-part format (ur:type/body without part index).
+    // The decoder must handle this format for backwards compatibility with
+    // existing QR codes from older apps and hardware wallets.
+    String ur =
+        "UR:CRYPTO-PSBT/HDOSJOJKIDJYZMADAENYAOAEAEAEAOHDVSKNCLREJNPEBNCNRNMNJOJOFEJZEOJLKERDONSPKPKKDKYKFELOKGPRPYUTKPAEAEAEAEAEZMZMZMZMLSLGAADITIWPIHBKISPKFGRKBDASLEWDFYCPRTJSPRSGKSECDRATKKHKTIKEWDCAADAEAEAEAEZMZMZMZMAOJOPKWTAYAEAEAEAECMAEBBTPHHDNJSTIAMBDASSOLOIMWMLYHYGDNLCATNBGGTAEVYYKAHAEAEAEAECMAEBBAEPLPTOEVWWTYAKOONLOURGOFGVSJYDPCALTAEMYAEAEAEAEAEAEAEAEAEBKGDCARH";
+
+    URDecoder urDecoder = URDecoder();
+    expect(urDecoder.isComplete(), isFalse);
+
+    urDecoder.receive(ur);
+    expect(urDecoder.isComplete(), isTrue);
+
+    NativeObject nativeObject = urDecoder.resolve(SupportedType.cryptoPSBT);
+    nativeObject as CryptoPSBT;
+    String data = nativeObject.getData();
+
+    // Verify the decoded data matches the known PSBT hex
+    expect(
+        data,
+        equals(
+            '70736274ff01009a020000000258e87a21b56daf0c23be8e7070456c336f7cbaa5c8757924f545887bb2abdd750000000000ffffffff838d0427d0ec650a68aa46bb0b098aea4422c071b2ca78352a077959d07cea1d0100000000ffffffff0270aaf00800000000160014d85c2b71d0060b09c9886aeb815e50991dda124d00e1f5050000000016001400aea9a2e5f0f876a588df5546e8742d1d87008f000000000000000000'));
+  });
+
+  test("single-part PSBT encode-decode round-trip", () async {
+    String psbtHex =
+        '70736274ff01009a020000000258e87a21b56daf0c23be8e7070456c336f7cbaa5c8757924f545887bb2abdd750000000000ffffffff838d0427d0ec650a68aa46bb0b098aea4422c071b2ca78352a077959d07cea1d0100000000ffffffff0270aaf00800000000160014d85c2b71d0060b09c9886aeb815e50991dda124d00e1f5050000000016001400aea9a2e5f0f876a588df5546e8742d1d87008f000000000000000000';
+
+    // Encode
+    CryptoPSBT cryptoPSBT = CryptoPSBT.factory(hex.decode(psbtHex));
+    UREncoder urEncoder = cryptoPSBT.toUREncoder();
+
+    // Decode (single part: one call to nextPart/receive should complete)
+    URDecoder urDecoder = URDecoder();
+    int partCount = 0;
+    while (!urDecoder.isComplete()) {
+      String part = urEncoder.nextPart();
+      urDecoder.receive(part);
+      partCount++;
+    }
+    expect(partCount, equals(1));
+
+    // Verify round-trip
+    NativeObject nativeObject = urDecoder.resolve(SupportedType.cryptoPSBT);
+    nativeObject as CryptoPSBT;
+    expect(nativeObject.getData(), equals(psbtHex));
+  });
+
+  test("multi-part PSBT encode-decode round-trip", () async {
+    // Create a payload large enough to require multi-part UR encoding.
+    // The encoder uses a 400-byte fragment size, so >400 bytes forces multiple parts.
+    final largeData = List.generate(1200, (i) => i % 256);
+    final inputHex = hex.encode(largeData);
+
+    // Encode
+    CryptoPSBT cryptoPSBT = CryptoPSBT.factory(largeData);
+    UREncoder urEncoder = cryptoPSBT.toUREncoder();
+
+    // Decode all parts
+    URDecoder urDecoder = URDecoder();
+    int partCount = 0;
+    while (!urDecoder.isComplete()) {
+      String part = urEncoder.nextPart();
+      urDecoder.receive(part);
+      partCount++;
+    }
+
+    // Verify we actually needed multiple parts
+    expect(partCount, greaterThan(1));
+
+    // Verify decoded data matches the original
+    NativeObject nativeObject = urDecoder.resolve(SupportedType.cryptoPSBT);
+    nativeObject as CryptoPSBT;
+    expect(nativeObject.getData(), equals(inputHex));
   });
 }
