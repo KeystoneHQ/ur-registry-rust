@@ -1,3 +1,8 @@
+## 0.5.1
+- Fixed iOS Swift Package Manager builds to keep all Dart FFI lookup symbols available at runtime.
+- Added missing iOS header declarations for Cardano and HD key FFI functions.
+- Made iOS XCFramework generation idempotent.
+
 ## 0.5.0
 - Replaced iOS fat binary with XCFramework (fixes Xcode 26+ arm64 simulator support)
 - Added Swift Package Manager support for iOS

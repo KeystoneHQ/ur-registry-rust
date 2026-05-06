@@ -24,10 +24,12 @@ public class SwiftUrRegistryFlutterPlugin: NSObject, FlutterPlugin {
     crypto_hd_key_get_chain_code(anyPointer);
     crypto_hd_key_get_name(anyPointer);
     crypto_hd_key_get_path(anyPointer);
+    crypto_hd_key_get_children_path(anyPointer);
     crypto_hd_key_get_source_fingerprint(anyPointer);
     crypto_hd_key_get_account_index(anyPointer, 1);
     crypto_hd_key_get_depth(anyPointer);
     crypto_hd_key_get_note(anyPointer);
+    crypto_hd_key_get_bip32_xpub(anyPointer);
 
     crypto_account_get_accounts_len(anyPointer);
     crypto_account_get_account(anyPointer, 1);

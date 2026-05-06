@@ -40,6 +40,8 @@ PtrResponse crypto_hd_key_get_name(void *crypto_hdkey);
 
 PtrResponse crypto_hd_key_get_path(void *crypto_hdkey);
 
+PtrResponse crypto_hd_key_get_children_path(void *crypto_hdkey);
+
 PtrResponse crypto_hd_key_get_source_fingerprint(void *crypto_hdkey);
 
 PtrResponse crypto_hd_key_get_account_index(void *crypto_hdkey, uint32_t level);
@@ -47,6 +49,8 @@ PtrResponse crypto_hd_key_get_account_index(void *crypto_hdkey, uint32_t level);
 PtrResponse crypto_hd_key_get_depth(void *crypto_hdkey);
 
 PtrResponse crypto_hd_key_get_note(void *crypto_hdkey);
+
+PtrResponse crypto_hd_key_get_bip32_xpub(void *crypto_hdkey);
 
 PtrResponse crypto_account_get_accounts_len(void *crypto_account);
 
