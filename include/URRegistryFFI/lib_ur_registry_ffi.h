@@ -102,6 +102,114 @@ PtrResponse eth_signature_get_signature(void *eth_signarure);
 
 PtrResponse eth_signature_get_request_id(void *eth_signature);
 
+PtrResponse cardano_sign_request_new(void);
+
+PtrResponse cardano_sign_request_construct(void *request_id,
+                                           void *sign_data,
+                                           void *utxos,
+                                           void *cert_keys,
+                                           void *origin);
+
+PtrResponse cardano_sign_request_get_ur_encoder(void *cardano_sign_request);
+
+PtrResponse cardano_sign_request_get_request_id(void *cardano_sign_request);
+
+PtrResponse cardano_signature_get_witness_set(void *cardano_signature);
+
+PtrResponse cardano_signature_get_request_id(void *cardano_signature);
+
+PtrResponse cardano_sign_data_request_new(void);
+
+PtrResponse cardano_sign_data_request_construct(void *request_id,
+                                                void *mfp,
+                                                void *sign_data,
+                                                void *derivation_path,
+                                                void *origin,
+                                                void *xpub);
+
+PtrResponse cardano_sign_data_request_get_ur_encoder(void *cardano_sign_data_request);
+
+PtrResponse cardano_sign_data_request_get_request_id(void *cardano_sign_data_request);
+
+PtrResponse cardano_sign_data_signature_new(void);
+
+PtrResponse cardano_sign_data_signature_construct(void *request_id,
+                                                  void *signature,
+                                                  void *public_key);
+
+PtrResponse cardano_sign_data_signature_get_request_id(void *signature);
+
+PtrResponse cardano_sign_data_signature_get_signature(void *signature);
+
+PtrResponse cardano_sign_data_signature_get_public_key(void *signature);
+
+PtrResponse cardano_sign_cip8_data_request_new(void);
+
+PtrResponse cardano_sign_cip8_data_request_construct(void *request_id,
+                                                     void *mfp,
+                                                     void *sign_data,
+                                                     void *derivation_path,
+                                                     void *xpub,
+                                                     void *origin,
+                                                     bool hash_payload,
+                                                     void *address_bench32,
+                                                     uint32_t address_type);
+
+PtrResponse cardano_sign_cip8_data_request_get_ur_encoder(void *cardano_sign_cip8_data_request);
+
+PtrResponse cardano_sign_cip8_data_request_get_request_id(void *cardano_sign_cip8_data_request);
+
+PtrResponse cardano_sign_cip8_data_signature_new(void);
+
+PtrResponse cardano_sign_cip8_data_signature_construct(void *request_id,
+                                                       void *signature,
+                                                       void *public_key,
+                                                       void *address_field);
+
+PtrResponse cardano_sign_cip8_data_signature_get_request_id(void *signature);
+
+PtrResponse cardano_sign_cip8_data_signature_get_signature(void *signature);
+
+PtrResponse cardano_sign_cip8_data_signature_get_public_key(void *signature);
+
+PtrResponse cardano_sign_cip8_data_signature_get_address_field(void *signature);
+
+PtrResponse cardano_catalyst_voting_registration_new(void);
+
+PtrResponse cardano_catalyst_voting_registration_construct(void *request_id,
+                                                           void *mfp,
+                                                           void *delegations,
+                                                           void *stake_pub,
+                                                           void *payment_address,
+                                                           void *nonce,
+                                                           uint8_t voting_purpose,
+                                                           void *derivation_path,
+                                                           void *origin,
+                                                           uint8_t sign_type);
+
+PtrResponse cardano_catalyst_voting_registration_get_ur_encoder(void *cardano_catalyst_voting_registration);
+
+PtrResponse cardano_catalyst_voting_registration_get_request_id(void *cardano_catalyst_voting_registration);
+
+PtrResponse cardano_catalyst_signature_new(void);
+
+PtrResponse cardano_catalyst_signature_construct(void *request_id,
+                                                 void *signature);
+
+PtrResponse cardano_catalyst_signature_get_request_id(void *catalyst_signature);
+
+PtrResponse cardano_catalyst_signature_get_signature(void *catalyst_signature);
+
+PtrResponse cardano_sign_tx_hash_request_construct(void *request_id,
+                                                   void *tx_hash,
+                                                   void *paths,
+                                                   void *origin,
+                                                   void *address_list);
+
+PtrResponse cardano_sign_tx_hash_request_get_ur_encoder(void *cardano_sign_tx_hash_request);
+
+PtrResponse cardano_sign_tx_hash_request_get_request_id(void *cardano_sign_tx_hash_request);
+
 PtrResponse ur_decoder_new(void);
 
 PtrResponse ur_decoder_receive(void *decoder, void *ur);
