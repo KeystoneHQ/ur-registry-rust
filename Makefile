@@ -58,10 +58,12 @@ generate_ios:
 	cargo build --release --target x86_64-apple-ios -p ur-registry-ffi
 	@echo "Creating simulator fat library"
 	mkdir -p target/sim
+	rm -f target/sim/libur_registry_ffi.a
 	lipo target/aarch64-apple-ios-sim/release/libur_registry_ffi.a \
 	     target/x86_64-apple-ios/release/libur_registry_ffi.a \
 	     -create -output target/sim/libur_registry_ffi.a
 	@echo "Creating XCFramework"
+	rm -rf target/URRegistryFFI.xcframework $(FLUTTER_PLUGIN)/ios/ur_registry_flutter/ur_registry_ffi.xcframework
 	xcodebuild -create-xcframework \
 	    -library target/aarch64-apple-ios/release/libur_registry_ffi.a -headers $(HEADERS) \
 	    -library target/sim/libur_registry_ffi.a -headers $(HEADERS) \
@@ -75,10 +77,12 @@ generate_ios_debug:
 	cargo build --target x86_64-apple-ios -p ur-registry-ffi
 	@echo "Creating simulator fat library"
 	mkdir -p target/sim
+	rm -f target/sim/libur_registry_ffi.a
 	lipo target/aarch64-apple-ios-sim/debug/libur_registry_ffi.a \
 	     target/x86_64-apple-ios/debug/libur_registry_ffi.a \
 	     -create -output target/sim/libur_registry_ffi.a
 	@echo "Creating XCFramework"
+	rm -rf target/URRegistryFFI.xcframework $(FLUTTER_PLUGIN)/ios/ur_registry_flutter/ur_registry_ffi.xcframework
 	xcodebuild -create-xcframework \
 	    -library target/aarch64-apple-ios/debug/libur_registry_ffi.a -headers $(HEADERS) \
 	    -library target/sim/libur_registry_ffi.a -headers $(HEADERS) \
